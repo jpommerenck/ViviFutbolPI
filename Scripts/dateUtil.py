@@ -19,3 +19,51 @@ def get_current_short_date_str():
 
 def get_current_time_int():
     return int(datetime.now().strftime('%H%M'))
+
+def get_time(date_to_convert):
+    date_time = date_to_convert.split('_')[1]
+    return date_time.split('-')[0] + date_time.split('-')[1] + date_time.split('-')[2]
+
+
+def get_time_subtraction(date_to_convert, time_recording):
+    date_time = date_to_convert.split('_')[1]
+    minuts_int = (int(date_time.split('-')[1])-time_recording)%60
+    seconds_aux = date_time.split('-')[2]
+    seconds = seconds_aux.split('.')[0]
+    hours = date_time.split('-')[0]
+
+    if minuts_int>int(date_time.split('-')[1]):
+        hours_int = int(date_time.split('-')[0]) - 1
+        if hours_int<10:
+            hours = '0'+str(hours_int)
+        else:
+            hours = str(hours_int)   
+    
+    if minuts_int<10:
+        minuts = '0'+str(minuts_int)
+    else:
+        minuts = str(minuts_int)
+     
+    return hours + minuts + seconds
+
+
+def get_time_adition(date_to_convert, time_recording):
+    date_time = date_to_convert.split('_')[1]
+    minuts_int = (int(date_time.split('-')[1])+time_recording)%60
+    seconds_aux = date_time.split('-')[2]
+    seconds = seconds_aux.split('.')[0]
+    hours = date_time.split('-')[0]
+
+    if minuts_int<int(date_time.split('-')[1]):
+        hours_int = int(date_time.split('-')[0]) + 1
+        if hours_int<10:
+            hours = '0'+str(hours_int)
+        else:
+            hours = str(hours_int)   
+    
+    if minuts_int<10:
+        minuts = '0'+str(minuts_int)
+    else:
+        minuts = str(minuts_int)
+     
+    return hours + minuts + seconds
