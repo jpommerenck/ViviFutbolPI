@@ -18,6 +18,9 @@ def get_h264_files_in_directory(directory):
 
 def get_mp4_files_in_directory(directory):
     return glob.glob(directory+'/*.mp4')
+
+def get_jpg_files_in_directory(directory):
+    return glob.glob(directory+'/*.jpg')
     
 def delete_file(file_path):
     os.system('rm '+ file_path)
