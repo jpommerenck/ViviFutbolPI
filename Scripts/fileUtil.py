@@ -1,6 +1,7 @@
 import os
 import glob
 from dateUtil import get_current_short_date_str
+from os.path import basename
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbol/'
@@ -38,3 +39,6 @@ def newest_MP4_in_directory(directory):
         return max(glob.iglob(directory+'*.mp4'), key=os.path.getctime)
     else:
         return []
+
+def get_file_name_without_extension(name):
+    return basename(name)
