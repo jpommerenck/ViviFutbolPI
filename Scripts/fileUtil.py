@@ -4,7 +4,7 @@ from dateUtil import get_current_short_date_str
 from os.path import basename
 
 # Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbol/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/'
 PATH_CONCAT_VIDEOS = '/Concat/'
 
 def get_concat_file_name(file_name):
