@@ -5,16 +5,17 @@ import os
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
-TIME_RECORDING_VIDEO=10
-START_RECORDING_TIME=0727
-FINISH_RECORDING_TIME=728
+PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolPI/Pictures/'
+TIME_RECORDING_VIDEO=300
+START_RECORDING_TIME=1207
+FINISH_RECORDING_TIME=1500
 
 camera = PiCamera()
 
 try:
     camera.resolution = (640,480)
     total_video = 0
-    camera.start_preview()
+    #camera.start_preview()
     while total_video < 2:
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
@@ -31,5 +32,17 @@ try:
             current_time = get_current_time_int()
         total_video = total_video+1
 finally:
-    camera.stop_preview()
+    #camera.stop_preview()
     camera.close()
+
+# Metodo para tomar una foto en caso que la camara no este grabando
+def take_picture(picture_path):
+
+    if not os.path.exists(PATH_PICTURES_LOCALIZATION):
+        # En caso de no existir el directorio lo creo
+        os.makedirs(PATH_PICTURES_LOCALIZATION)
+
+    camera = PiCamera()
+    camera.capture(picture_path)
+
+    return picture_path

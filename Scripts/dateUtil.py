@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
+import time
 
 def get_current_date_str():
     return datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -24,7 +25,6 @@ def get_time(date_to_convert):
     date_aux = date_to_convert.split('_')[1]
     date_time = date_aux.split('.')[0]
     return date_time.split('-')[0] + date_time.split('-')[1] + date_time.split('-')[2]
-
 
 def get_time_subtraction(date_to_convert, time_recording):
     date_time = date_to_convert.split('_')[1]
@@ -121,4 +121,6 @@ def get_seconds_cut(time_first_video, time_match):
 
     return seconds_match - seconds_first_video
 
-
+def convert_seconds_to_minutes(seconds):
+    timeToSeconds = time.strftime("%H-%M-%S", time.gmtime(seconds))
+    print(timeToSeconds)
