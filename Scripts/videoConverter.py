@@ -4,7 +4,7 @@ from fileUtil import get_h264_files_in_directory, delete_file, newest_h264_in_di
 from dateUtil import get_current_short_date_str
 
 # Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbol/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
 SECONDS_WAITING_FOR_CONVERT_VIDEO=15
 last_newest_file = ''
 

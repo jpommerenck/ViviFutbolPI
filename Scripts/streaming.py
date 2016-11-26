@@ -2,9 +2,11 @@ from picamera import PiCamera
 from time import sleep
 from dateUtil import get_current_date_str, get_current_short_date_str, get_current_time_int
 import os
+import socket
+import io
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbol/Videos/'
 TIME_RECORDING_VIDEO=10
 START_RECORDING_TIME=0727
 FINISH_RECORDING_TIME=728

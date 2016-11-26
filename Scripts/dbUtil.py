@@ -1,6 +1,6 @@
 import sqlite3
 
-path = "/home/pi/VIviFutbol/BD/"
+path = "/home/pi/VIviFutbolPI/BD/"
 bd_name = "vivifutbol.db"
 
 def create_video_mark_table():
