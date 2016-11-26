@@ -40,7 +40,7 @@ def join_match_video(TIME_START, TIME_FINISH):
                 i=i+1
         else :
             i=i+1
-    print("prueba")
+            
     # Impresion para probar
     for file_name in file_array_match:
         print(file_name)
@@ -49,7 +49,6 @@ def join_match_video(TIME_START, TIME_FINISH):
     for file_name in file_array_match:
         concatString = concatString + " -cat " + file_name
 
-    print("prueba")
     # Impresion para probar
     print(video)
     print(concatString)
@@ -63,6 +62,7 @@ def join_match_video(TIME_START, TIME_FINISH):
     print(seconds_start_cut)
     seconds_finish_cut = get_seconds_cut(get_time(video), TIME_FINISH)
     print(seconds_finish_cut)
+    # Hay que cambiar la hora de fin para seconds_finish_cut
     os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + "45 " + newVideoPath + "MatchComplete.mp4" + " -out " + newVideoPath + "MatchSplit.mp4")
     
     
