@@ -2,7 +2,6 @@ from dbUtil import get_all_marks_between_dates
 
 marks = get_all_marks_between_dates('2016-10-15_12-04-23', '2016-10-15_12-04-50')
 
-
 for row in marks:
     print(row)
 

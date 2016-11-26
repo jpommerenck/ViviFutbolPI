@@ -55,11 +55,12 @@ def get_time_subtr(time_start, time_recording):
 
     if minuts_int>minutes_start:
         hours_start=hours_start-1
-        if hours_start<10:
-            hours = '0'+str(hours_start)
-        else:
-            hours = str(hours_start)   
-    
+        
+    if hours_start<10:
+        hours = '0'+str(hours_start)
+    else:
+        hours = str(hours_start)
+            
     if minuts_int<10:
         minuts = '0'+str(minuts_int)
     else:
@@ -96,10 +97,11 @@ def get_time_adi(time_start, time_recording):
 
     if minuts_int<minutes_start:
         hours_start=hours_start+1
-        if hours_start<10:
-            hours = '0'+str(hours_start)
-        else:
-            hours = str(hours_start)   
+
+    if hours_start<10:
+        hours = '0'+str(hours_start)
+    else:
+        hours = str(hours_start)   
     
     if minuts_int<10:
         minuts = '0'+str(minuts_int)
