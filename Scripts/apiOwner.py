@@ -1,11 +1,12 @@
 from flask import Flask
 from flask import send_file
 from fileUtil import image_monitor_device
-from dateUtil import get_current_date_str
+from dateUtil import get_current_date_str, get_current_short_date_str
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
 PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolPI/Pictures/'
+API_OWNER_PORT = 5001
 
 app = Flask(__name__)
 
@@ -13,8 +14,9 @@ app = Flask(__name__)
 @app.route('/getImageMonitorDevice', methods=['GET', 'POST'])
 def get_image_monitor_device():
     picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
-    image_monitor_device(PATH_VIDEO_LOCALIZATION, picture_path)
+    video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
+    image_monitor_device(video_directory, picture_path)
     return send_file(picture_path, mimetype='image/jpeg')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='172.24.1.1', port=5001)
+    app.run(debug=True, host='172.24.1.1', port=API_OWNER_PORT)

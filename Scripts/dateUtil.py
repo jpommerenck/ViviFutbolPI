@@ -124,5 +124,4 @@ def get_seconds_cut(time_first_video, time_match):
     return seconds_match - seconds_first_video
 
 def convert_seconds_to_minutes(seconds):
-    timeToSeconds = time.strftime("%H-%M-%S", time.gmtime(seconds))
-    print(timeToSeconds)
+    return time.strftime("%H:%M:%S", time.gmtime(seconds))
