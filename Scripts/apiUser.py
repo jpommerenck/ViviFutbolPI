@@ -20,7 +20,7 @@ def index():
     conn.close()
     return to_return
 
-
+102
 @app.route('/pruebas/<id>', methods=['GET', 'POST'])
 def get_prueba(id):
     return "" + id
