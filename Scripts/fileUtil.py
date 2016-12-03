@@ -60,12 +60,6 @@ def get_file_name(file_path):
 
 
 def image_monitor_device(directory, picture_path):
-    # Si ya existe una imagen la elimino para actualizarla
-    try:
-        os.remove(picture_path)
-    except OSError:
-        pass
-
     # Obtengo el video que se esta grabando para obtener el ultimo frame
     newest_h264_file = newest_h264_in_directory(directory + "/")
     picture_file = ''
