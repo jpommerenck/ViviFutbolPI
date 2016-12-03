@@ -41,3 +41,18 @@ def get_all_marks_between_dates(start, finish):
         marks.append(mark)
     conn.close()
     return marks
+
+def get_all_marks_not_processed():
+    marks = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM video_marks WHERE(is_processed = 0)'):
+        marks.append(row[0])
+    conn.close()
+    return marks
+
+
+def ejemplo():
+    marks = get_all_marks_not_processed()
+    for row in marks:
+        print row
