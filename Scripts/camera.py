@@ -5,10 +5,9 @@ import os
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
-PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolPI/Pictures/'
-TIME_RECORDING_VIDEO=300
-START_RECORDING_TIME=843
-FINISH_RECORDING_TIME=1200
+TIME_RECORDING_VIDEO=60
+START_RECORDING_TIME=1150
+FINISH_RECORDING_TIME=1155
 
 camera = PiCamera()
 
@@ -34,18 +33,8 @@ try:
         camera.close()
 finally:
     #camera.stop_preview()
-    #Aca para cerrarla falta consultar si esta abierta la camara
-    if camera._check_camera_open():
+    #Trato de cerrar la camara en caso de que este abierta
+    try:
         camera.close()
-
-# Metodo para tomar una foto en caso que la camara no este grabando
-def take_picture(picture_path):
-
-    if not os.path.exists(PATH_PICTURES_LOCALIZATION):
-        # En caso de no existir el directorio lo creo
-        os.makedirs(PATH_PICTURES_LOCALIZATION)
-
-    camera = PiCamera()
-    camera.capture(picture_path)
-    camera.close()
-    return picture_path
+    except OSError:
+        pass

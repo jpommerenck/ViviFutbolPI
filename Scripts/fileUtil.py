@@ -2,6 +2,7 @@ import os
 import glob
 from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes
 from os.path import basename
+from picamera import PiCamera
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/'
@@ -74,9 +75,14 @@ def image_monitor_device(directory, picture_path):
         time_last_frame = get_time_last_frame(newest_h264_file, picture_path)
         get_last_frame_from_current_video(newest_h264_file, picture_path, time_last_frame)
     else:
-        from camera import take_picture
         # Si la camara no esta grabando, saco una foto
-        take_picture(picture_path)
+        try:
+            PiCamera().close()
+        except OSError:
+            pass
+        camera = PiCamera()
+        camera.capture(picture_path)
+        camera.close()
 
 
 def get_last_frame_from_current_video(h264_file, picture_path, time_last_frame):
