@@ -63,7 +63,7 @@ def join_match_video(TIME_START, TIME_FINISH):
     seconds_finish_cut = get_seconds_cut(get_time(video), TIME_FINISH)
     print(seconds_finish_cut)
     # Hay que cambiar la hora de fin para seconds_finish_cut
-    os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + "45 " + newVideoPath + "MatchComplete.mp4" + " -out " + newVideoPath + "MatchSplit.mp4")
+    os.system("MP4Box -splitx " + "2" + ":" + "4 " + newVideoPath + "MatchComplete.mp4" + " -out " + newVideoPath + "MatchSplit.mp4")
     
     
         

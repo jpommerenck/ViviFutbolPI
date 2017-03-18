@@ -5,7 +5,7 @@ from dateUtil import get_current_date_str, get_current_short_date_str
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
-PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolPI/Pictures/'
+PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolPI/Pictures/MonitorDevice/'
 API_OWNER_PORT = 5001
 
 app = Flask(__name__)
