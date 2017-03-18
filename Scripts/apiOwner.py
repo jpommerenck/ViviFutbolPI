@@ -13,8 +13,11 @@ app = Flask(__name__)
 #172.24.1.1:5001/getImageMonitorDevice
 @app.route('/getImageMonitorDevice', methods=['GET', 'POST'])
 def get_image_monitor_device():
+    print('ENTRA A MONITOREAR LA IMAGEN')
     picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
+    print(picture_path)
     video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
+    print(video_directory)
     image_monitor_device(video_directory, picture_path)
     return send_file(picture_path, mimetype='image/jpeg')
 
