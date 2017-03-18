@@ -60,15 +60,18 @@ def get_file_name(file_path):
 
 
 def image_monitor_device(directory, picture_path):
+    print('Entro al image_monitor_device')
     # Obtengo el video que se esta grabando para obtener el ultimo frame
     newest_h264_file = newest_h264_in_directory(directory + "/")
     picture_file = ''
-
+    
     if len(newest_h264_file) > 0 :
+        print('voy a obtener de un h264')
         # Si se esta grabando un video obtengo el frame
         time_last_frame = get_time_last_frame(newest_h264_file, picture_path)
         get_last_frame_from_current_video(newest_h264_file, picture_path, time_last_frame)
     else:
+        print('voy a sacar una foto')
         # Si la camara no esta grabando, saco una foto
         try:
             PiCamera().close()
