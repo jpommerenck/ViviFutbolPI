@@ -9,6 +9,8 @@ def create_video_mark_table():
     cur.execute('CREATE TABLE video_marks (markdate TEXT PRIMARY KEY, is_processed INTEGER)')
     conn.close()
 
+# Esta funcion sirve para insertar las marcas de jugadas destacadas en la base de datos
+# Ejemplo invocacion : insert_mark("2017-03-26_20-41-10")
 def insert_mark(date):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -51,8 +53,6 @@ def get_all_marks_not_processed():
     conn.close()
     return marks
 
-
-def ejemplo():
-    marks = get_all_marks_not_processed()
-    for row in marks:
-        print row
+def create_all_tables():
+    create_video_mark_table()
+    create_configuration_table()

@@ -3,11 +3,9 @@ import time
 from fileUtil import get_mp4_files_in_directory
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time
 
-
-
-TIME_START = '092903'
-TIME_FINISH = '093853'
-TIME_RECORDING_VIDEO=10
+TIME_START = '210000'
+TIME_FINISH = '210455'
+TIME_RECORDING_VIDEO=15
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
 
 def join_match_video(TIME_START, TIME_FINISH):
@@ -20,8 +18,8 @@ def join_match_video(TIME_START, TIME_FINISH):
     video=""
 
     # Impresion para probar
-    for file_name in file_array:
-        print(file_name)
+    #for file_name in file_array:
+    #    print(file_name)
     
     while ((find_first_video == False) and (i<len(file_array))):
         video = file_array[i]
@@ -30,7 +28,6 @@ def join_match_video(TIME_START, TIME_FINISH):
         if (int(get_time_subtr(TIME_START, TIME_RECORDING_VIDEO)) < int(get_time(video))):
 
             find_first_video = True
-                
             file_array_match.append(video)
             i=i+1
 
@@ -64,8 +61,3 @@ def join_match_video(TIME_START, TIME_FINISH):
     print(seconds_finish_cut)
     # Hay que cambiar la hora de fin para seconds_finish_cut
     os.system("MP4Box -splitx " + "2" + ":" + "4 " + newVideoPath + "MatchComplete.mp4" + " -out " + newVideoPath + "MatchSplit.mp4")
-    
-    
-        
-        
-    
