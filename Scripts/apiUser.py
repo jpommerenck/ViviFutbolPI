@@ -27,6 +27,8 @@ def get_prueba(id):
 @app.route('/getImages', methods=['GET', 'POST'])
 def get_images():
     directory = '/home/pi/ViviFutbolPI/Videos/2016-11-12/mp4'
+    directory = '/home/pi/ViviFutbolPI/Videos/2017-03-26/mp4'
+    
     newDirectoryName = "tmp"
     newDirectory = directory + "/" + newDirectoryName
     if(not os.path.exists(newDirectory)):
@@ -46,6 +48,7 @@ def get_images():
 def get_video(name):
     name = name.split('.')[0] + ".mp4"
     directory = '/home/pi/ViviFutbolPI/Videos/2016-11-12/mp4'
+    directory = '/home/pi/ViviFutbolPI/Videos/2017-03-26/mp4'
     filePath = directory + "/" + name
     if os.path.isfile(filePath):
         return send_file(filePath, mimetype='video/mp4')
