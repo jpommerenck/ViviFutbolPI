@@ -4,7 +4,7 @@ from dateUtil import get_current_date_str, get_current_short_date_str, get_curre
 import os
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/VideosEXPO/'
 TIME_RECORDING_VIDEO=15
 START_RECORDING_TIME=900
 FINISH_RECORDING_TIME=1823
@@ -13,8 +13,8 @@ camera = PiCamera()
 
 try:
     camera.resolution = (640,480)
-    #camera.resolution = (1280,960)
-    camera.framerate = 30
+    camera.iso = 800
+    camera.shutter_speed = 6000000
     
     total_video = 0
     while total_video < 2:
