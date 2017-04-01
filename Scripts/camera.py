@@ -4,10 +4,10 @@ from dateUtil import get_current_date_str, get_current_short_date_str, get_curre
 import os
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 TIME_RECORDING_VIDEO=15
-START_RECORDING_TIME=1048
-FINISH_RECORDING_TIME=1051
+START_RECORDING_TIME=2054
+FINISH_RECORDING_TIME=2105
 
 camera = PiCamera()
 

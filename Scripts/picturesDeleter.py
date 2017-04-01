@@ -3,7 +3,7 @@ from time import sleep
 import shutil
 
 #Constantes de la base de datos
-PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolPI/Pictures/'
+PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolLocal/Pictures/'
 
 
 while True:
