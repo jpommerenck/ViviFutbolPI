@@ -1,6 +1,7 @@
 from datetime import datetime
 from datetime import timedelta
 import time
+import os
 
 def get_current_date_str():
     return datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -125,3 +126,9 @@ def get_seconds_cut(time_first_video, time_match):
 
 def convert_seconds_to_minutes(seconds):
     return time.strftime("%H:%M:%S", time.gmtime(seconds))
+
+def set_time (hours, minutes):
+    datePI = get_current_short_date_str()
+    os.system('sudo date -s "'+datePI+' '+hours+':'+minutes+':00"')
+
+
