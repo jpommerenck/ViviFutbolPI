@@ -7,7 +7,7 @@ from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed
 TIME_AFTER = 5
 TIME_BEFORE = 5
 TIME_RECORDING_VIDEO=15
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 
 video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + '/mp4/'
 file_array = get_mp4_files_in_directory(video_path)

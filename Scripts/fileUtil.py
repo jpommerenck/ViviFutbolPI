@@ -5,7 +5,7 @@ from os.path import basename
 from picamera import PiCamera
 
 # Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/'
 PATH_CONCAT_VIDEOS = '/Concat/'
 
 def get_concat_file_name(file_name):

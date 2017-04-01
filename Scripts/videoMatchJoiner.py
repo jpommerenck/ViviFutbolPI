@@ -6,7 +6,7 @@ from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, g
 TIME_START = '210000'
 TIME_FINISH = '210455'
 TIME_RECORDING_VIDEO=15
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolPI/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 
 def join_match_video(TIME_START, TIME_FINISH):
     video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + '/mp4/'
