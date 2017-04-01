@@ -55,5 +55,13 @@ def get_video(name):
     else:
         return ('',204)
 
+@app.route('/validateCode/<code>', methods=['GET', 'POST'])
+def validate_code(code):
+    if code == "ABC123":
+        return ('OK', 200)
+    else:
+        return ('ERROR', 200)
+    
+
 if __name__ == '__main__':
     app.run(debug=True, host='172.24.1.1')
