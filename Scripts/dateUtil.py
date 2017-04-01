@@ -130,5 +130,3 @@ def convert_seconds_to_minutes(seconds):
 def set_time (hours, minutes):
     datePI = get_current_short_date_str()
     os.system('sudo date -s "'+datePI+' '+hours+':'+minutes+':00"')
-
-

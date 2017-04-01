@@ -6,15 +6,16 @@ import os
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 TIME_RECORDING_VIDEO=15
-START_RECORDING_TIME=2054
-FINISH_RECORDING_TIME=2105
+START_RECORDING_TIME=900
+FINISH_RECORDING_TIME=1823
 
 camera = PiCamera()
 
 try:
     camera.resolution = (640,480)
+    #camera.resolution = (1280,960)
+    camera.framerate = 30
     total_video = 0
-    #camera.start_preview()
     while total_video < 2:
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
@@ -25,7 +26,7 @@ try:
                 # En caso de no existir el directorio lo creo
                 os.makedirs(video_path)
 
-            camera.start_recording(video_path + get_current_date_str() + '.h264')
+            camera.start_recording(video_path + get_current_date_str() + '.h264', format='h264', intra_period=1)
             camera.wait_recording(TIME_RECORDING_VIDEO)
             camera.stop_recording()
             current_time = get_current_time_int()

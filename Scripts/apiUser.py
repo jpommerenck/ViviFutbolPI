@@ -8,7 +8,8 @@ import os
 import os.path
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2016-11-12/mp4'
+#PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2016-11-12/mp4'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2017-04-01/mp4'
 
 app = Flask(__name__)
 
