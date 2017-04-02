@@ -15,6 +15,7 @@ try:
     camera.resolution = (640,480)
     #camera.resolution = (1280,960)
     camera.framerate = 30
+    
     total_video = 0
     while total_video < 2:
         current_time = get_current_time_int()

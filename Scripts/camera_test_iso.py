@@ -4,7 +4,7 @@ from dateUtil import get_current_date_str, get_current_short_date_str, get_curre
 import os
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/VideosEXPO/'
 TIME_RECORDING_VIDEO=15
 START_RECORDING_TIME=900
 FINISH_RECORDING_TIME=1823
