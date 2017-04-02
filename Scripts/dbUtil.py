@@ -56,10 +56,9 @@ def get_all_marks_not_processed():
 def get_config_value(variable):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    value = cur.execute('SELECT * FROM configurations WHERE(variable = "' + variable + '")')
-    #FALTA AGREGAR EL VALOR DEL CURSOR Y LISTO
+    value = cur.execute('SELECT * FROM configurations WHERE(variable = "' + variable + '")').fetchone()
     conn.close()
-    return value;
+    return value[1]
 
 def create_all_tables():
     create_video_mark_table()
@@ -67,18 +66,21 @@ def create_all_tables():
 
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
-    insert_configuration_value('VIDEO_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Videos/')
-    insert_configuration_value('PICTURES_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/')
-    insert_configuration_value('TEMP_FILES_PATH','tmp')
-    insert_configuration_value('CONCAT_VIDEOS_PATH','/Concat/')
-    insert_configuration_value('MP4_VIDEOS_PATH','/mp4/')
-    insert_configuration_value('HIGHLIGHTS_VIDEOS_PATH','Highlights/')
-    insert_configuration_value('API_OWNER_PORT','5001')
-    insert_configuration_value('API_MANAGEMENT_PORT','5002')
-    insert_configuration_value('API_USER_PORT','5000')
-    insert_configuration_value('SECONDS_WAITING_FOR_CONVERT_VIDEO','30')
-    insert_configuration_value('TIME_AFTER_RECORD','5')
-    insert_configuration_value('TIME_BEFORE_RECORD','5')
-    insert_configuration_value('TIME_RECORDING_VIDEO','15')
-    insert_configuration_value('START_RECORDING_TIME','0900')
-    insert_configuration_value('FINISH_RECORDING_TIME','0000')
+    #insert_configuration_value('VIDEO_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Videos/')
+    #insert_configuration_value('PICTURES_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/')
+    #insert_configuration_value('TEMP_FILES_PATH','tmp')
+    #insert_configuration_value('CONCAT_VIDEOS_PATH','/Concat/')
+    #insert_configuration_value('MP4_VIDEOS_PATH','/mp4/')
+    #insert_configuration_value('HIGHLIGHTS_VIDEOS_PATH','Highlights/')
+    #insert_configuration_value('API_OWNER_PORT','5001')
+    #insert_configuration_value('API_MANAGEMENT_PORT','5002')
+    #insert_configuration_value('API_USER_PORT','5000')
+    #insert_configuration_value('SECONDS_WAITING_FOR_CONVERT_VIDEO','30')
+    #insert_configuration_value('TIME_AFTER_RECORD','5')
+    #insert_configuration_value('TIME_BEFORE_RECORD','5')
+    #insert_configuration_value('TIME_RECORDING_VIDEO','15')
+    #insert_configuration_value('START_RECORDING_TIME','0900')
+    #insert_configuration_value('FINISH_RECORDING_TIME','0000')
+    #insert_configuration_value('OWNER_TOKEN','0000')
+    #insert_configuration_value('MANAGEMENT_TOKEN','0000')
+    #insert_configuration_value('INSTALLER_TOKEN','0000')
