@@ -5,7 +5,6 @@ from dateUtil import get_current_short_date_str
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
 SECONDS_WAITING_FOR_CONVERT_VIDEO=15
 last_newest_file = ''
 
@@ -31,10 +30,13 @@ try:
 
                     audio_file_name = file_name.replace("Videos", "Audios")
                     audio_file_name = audio_file_name.replace(".h264", ".wav")
-                    
+
+                    #Convierte el video de .264 a .mp4
                     os.system('MP4Box -add '+ file_name +':fps=30 '+ aux_file_name)
+                    #Agrega el audio al video
                     os.system('avconv -i ' + aux_file_name + ' -i ' + audio_file_name + ' -vcodec copy -strict experimental -shortest ' + new_file_name)
 
+                    #Elimino los archivos temporales
                     delete_file(file_name)
                     delete_file(aux_file_name)
                     delete_file(audio_file_name)
