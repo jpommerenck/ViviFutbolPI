@@ -33,12 +33,13 @@ try:
                     #Convierte el video de .264 a .mp4
                     os.system('MP4Box -add '+ file_name +':fps=30 '+ aux_file_name)
                     #Agrega el audio al video
-                    os.system('avconv -i ' + aux_file_name + ' -i ' + audio_file_name + ' -vcodec copy -strict experimental -shortest ' + new_file_name)
+                    if os.path.exists(audio_file_name):
+                        os.system('avconv -i ' + aux_file_name + ' -i ' + audio_file_name + ' -vcodec copy -strict experimental -shortest ' + new_file_name)
 
                     #Elimino los archivos temporales
                     delete_file(file_name)
                     delete_file(aux_file_name)
-                    #delete_file(audio_file_name)
+
         var = var + 1
         time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
         last_newest_file = newest_file

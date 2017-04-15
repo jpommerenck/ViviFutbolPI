@@ -8,7 +8,7 @@ PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
 TIME_RECORDING_VIDEO=15
 START_RECORDING_TIME=900
-FINISH_RECORDING_TIME=1823
+FINISH_RECORDING_TIME=2030
 
 camera = PiCamera()
 
@@ -34,8 +34,11 @@ try:
 
             camera.start_recording(video_path + get_current_date_str() + '.h264', format='h264', intra_period=1)
             os.system('arecord -D plughw:1 --duration=' + str(TIME_RECORDING_VIDEO) + ' -f cd -vv ' + audio_path + get_current_date_str() + '.wav')
-            #camera.wait_recording(TIME_RECORDING_VIDEO)
-            camera.stop_recording()
+            if os.path.exists(audio_path):
+                camera.stop_recording()
+            else :
+                camera.wait_recording(TIME_RECORDING_VIDEO)
+                camera.stop_recording()
             current_time = get_current_time_int()
         total_video = total_video+1
         camera.close()
