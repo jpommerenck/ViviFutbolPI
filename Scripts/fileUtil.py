@@ -29,7 +29,10 @@ def get_jpg_files_in_directory(directory):
 
 
 def get_wav_files_in_directory(directory):
-    return glob.glob(directory+'/*.wav')
+    #return glob.glob(directory+'/*.wav')
+    files = filter(os.path.isfile, glob.glob(directory+'/*.wav'))
+    files = [os.path.join(directory, f) for f in files]
+    return files.sort(key=lambda x: os.path.getmtime(x))
 
     
 def delete_file(file_path):

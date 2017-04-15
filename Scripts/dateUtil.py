@@ -130,3 +130,10 @@ def convert_seconds_to_minutes(seconds):
 def set_time (hours, minutes):
     datePI = get_current_short_date_str()
     os.system('sudo date -s "'+datePI+' '+hours+':'+minutes+':00"')
+
+def check_for_insert_mark(new_mark, last_mark, time_blocked):
+    last_mark = add_seconds_to_date(last_mark, time_blocked)
+    if new_mark > last_mark:
+        return True
+    else:
+        return False

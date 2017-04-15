@@ -3,12 +3,14 @@ import subprocess
 import sys
 import re
 import time
-from dateUtil import get_current_short_date_str, add_seconds_to_date, get_current_date_str, str_to_date
+from dateUtil import get_current_short_date_str, add_seconds_to_date, get_current_date_str, str_to_date, check_for_insert_mark, get_date_str
 from fileUtil import get_wav_files_in_directory, newest_wav_in_directory
+from dbUtil import get_last_mark, insert_mark
 
 
 PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
 SECONDS_WAITING_FOR_CONVERT_VIDEO=15
+SECONDS_WAITING_FOR_ADD_NEW_MARK=5
 
 
 def main(args=None):
@@ -21,6 +23,7 @@ def main(args=None):
             audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str()
             #audio_path = audio_path + "/mp4/"
             file_array = get_wav_files_in_directory(audio_path)
+            print(file_array)
             newest_file = newest_wav_in_directory(audio_path + '/')
 
             if len(file_array) > 0 :
@@ -39,14 +42,20 @@ def main(args=None):
                             os.system('rm '+ file_aux)
                             
                             if amplitude > 0.15:
-                                print(audio_path + "/" + file_name)
+                                last_mark = str_to_date(get_last_mark())
+                                
                                 audio_file = file_name.replace(audio_path + "/", '')
                                 audio_file = audio_file.replace('.wav', '')
-                                print(add_seconds_to_date(str_to_date(audio_file), i))
+                                new_mark_for_insert = add_seconds_to_date(str_to_date(audio_file), i)
+                                
+                                #if check_for_insert_mark(new_mark_for_insert, last_mark, SECONDS_WAITING_FOR_ADD_NEW_MARK):
+                                    #insert_mark(get_date_str(new_mark_for_insert))
+                                #else:
+                                #    print('ahora no va a insertar la marca ' + get_date_str(new_mark_for_insert))
 
-                        os.remove(file_name)
+                        #os.remove(file_name)
  
-            var = var + 1
+            var = var + 10
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
     except KeyboardInterrupt:
         print('')
