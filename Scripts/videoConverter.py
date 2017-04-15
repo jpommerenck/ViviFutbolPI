@@ -12,7 +12,6 @@ try:
     var = 0
     while var < 10 :
         video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
-        audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str()
         video_path_mp4 = video_path + '/mp4/'
         file_array = get_h264_files_in_directory(video_path)
         newest_file = newest_h264_in_directory(video_path + '/')
@@ -39,7 +38,7 @@ try:
                     #Elimino los archivos temporales
                     delete_file(file_name)
                     delete_file(aux_file_name)
-                    delete_file(audio_file_name)
+                    #delete_file(audio_file_name)
         var = var + 1
         time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
         last_newest_file = newest_file
