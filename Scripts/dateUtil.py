@@ -16,6 +16,12 @@ def str_to_date(date_str):
     return datetime.strptime(date_str, '%Y-%m-%d')
 
 
+# Obtiene la resta de 2 fechas en segundos
+def rest_date_to_seconds(date1, date2):
+    difference = date2 - date1
+    return difference.seconds
+
+
 # Toma el path de un video y obtiene la fecha del video
 def convert_path_to_str_date(video_path):
     video_str_date = video_path.split('.mp4')[0]
