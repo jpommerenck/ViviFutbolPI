@@ -77,7 +77,7 @@ for row in marks:
 
                     
                     os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)                    
-                    os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(total_record) +" " + aux_video_path + " -out " + higlight_video_path)
+                    os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
                     os.remove(aux_video_path)
                     
                 else:
@@ -95,7 +95,7 @@ for row in marks:
                     seconds_start_cut = TIME_RECORDING_VIDEO - seconds_start_cut
 
                     os.system("MP4Box -cat "  + previous_video + ' -cat ' + video +  " " + aux_video_path)
-                    os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(total_record) +" " + aux_video_path + " -out " + higlight_video_path)
+                    os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
                     os.remove(aux_video_path)
                 else:
                     os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(total_record) +" " + video + " -out " + higlight_video_path)                    
