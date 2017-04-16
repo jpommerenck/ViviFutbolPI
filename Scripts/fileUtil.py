@@ -27,11 +27,34 @@ def get_mp4_files_in_directory(directory):
 def get_jpg_files_in_directory(directory):
     return glob.glob(directory+'/*.jpg')
 
+
+def get_wav_files_in_directory(directory):
+    #return glob.glob(directory+'/*.wav')
+    files = filter(os.path.isfile, glob.glob(directory+'/*.wav'))
+    files = [os.path.join(directory, f) for f in files]
+    return files.sort(key=lambda x: os.path.getmtime(x))
+
     
 def delete_file(file_path):
     os.system('rm '+ file_path)
 
 
+def newest_h264_in_directory(directory):
+    file_array = get_h264_files_in_directory(directory)
+    if len(file_array) > 0:
+        return max(glob.iglob(directory+'*.h264'), key=os.path.getctime)
+    else:
+        return []
+
+
+def newest_wav_in_directory(directory):
+    file_array = get_h264_files_in_directory(directory)
+    if len(file_array) > 0:
+        return max(glob.iglob(directory+'*.wav'), key=os.path.getctime)
+    else:
+        return []
+
+    
 def newest_h264_in_directory(directory):
     file_array = get_h264_files_in_directory(directory)
     if len(file_array) > 0:
