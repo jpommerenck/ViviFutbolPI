@@ -15,6 +15,14 @@ def str_to_date_time(date_str):
 def str_to_date(date_str):
     return datetime.strptime(date_str, '%Y-%m-%d')
 
+
+# Toma el path de un video y obtiene la fecha del video
+def convert_path_to_str_date(video_path):
+    video_str_date = video_path.split('.mp4')[0]
+    video_str_date = video_str_date.split('/mp4/')[1]
+    return video_str_date
+
+
 def add_seconds_to_date(date_to_add, seconds_to_add):
     date_to_add += timedelta(seconds=seconds_to_add)
     return date_to_add

@@ -1,6 +1,6 @@
 import os
 import glob
-from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date
+from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date, convert_path_to_str_date
 from os.path import basename
 from picamera import PiCamera
 
@@ -126,8 +126,7 @@ def get_time_last_frame(newest_h264_file, picture_path):
 
 
 def get_next_video(video_path):
-    video_str_date = video_path.split('.mp4')[0]
-    video_str_date = video_str_date.split('/mp4/')[1]
+    video_str_date = convert_path_to_str_date(video_path)
     video_date = str_to_date_time(video_str_date)
     new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
     new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
@@ -138,8 +137,14 @@ def get_next_video(video_path):
         new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + new_video_date + '/mp4/'
 
         if len(oldest_MP4_in_directory(new_video_path)) !=0 :
-            new_video_path = oldest_MP4_in_directory(new_video_path)[0]
-            print('---- IF new_video_path : ' + new_video_path)
+            new_video_path = oldest_MP4_in_directory(new_video_path)
 
     return new_video_path    
     
+def video_contains_mark(video_date, mark):
+    finish_time = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
+    mark_date = str_to_date_time(mark)
+    if (video_date < mark_date and finish_time > mark_date):
+        return True
+    else:
+        return False

@@ -1,7 +1,7 @@
 import time
 import os
-from fileUtil import get_mp4_files_in_directory, get_next_video
-from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time
+from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark
+from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date
 from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed
 
 TIME_AFTER = 5
@@ -24,7 +24,6 @@ video_path = ''
 for row in marks:
 
     mark_date = row.split('_')[0]
-    print(mark_date)
     j = 0
     if mark_date != last_mark_date:
         find_video = False
@@ -40,9 +39,21 @@ for row in marks:
             os.makedirs(new_video_path)
 
     for video in file_array:
-        print('video: ' + video)
-        next_video = get_next_video(video)
-        print('next_video: ' + next_video)
-        #Pregunto si la marca esta dentro del video
-        #if int(get_time(row) > 
+        print('a')
+        video_str_date = convert_path_to_str_date(video)
+        video_date = str_to_date_time(video_str_date)
 
+        # Consulto si la marca se realizo cuando se filmaba el video
+        if video_contains_mark(video_date, row):
+            print('entro al if porque la marca esta en el video')
+
+            #aca tengo que hacer 3 if, y que cada uno se encargue de hacer su logica
+            
+            # Cuando no preciso concatenar videos
+
+            # Cuando preciso concatenar con el siguiente video
+            next_video = get_next_video(video)
+            next_video_str_date = convert_path_to_str_date(next_video)
+            next_video_date = str_to_date(next_video_str_date)
+            
+            # Cuando preciso concatenar con el video anterior
