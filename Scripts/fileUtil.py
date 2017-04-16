@@ -134,7 +134,7 @@ def get_next_video(video_path):
     video_str_date = video_str_date.split('_')[0]
     new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
     new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
-    
+
     if not os.path.exists(new_video_path):
         new_video_date = str(new_video_date).split(' ')[0]
         new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
