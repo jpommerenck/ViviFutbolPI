@@ -34,7 +34,8 @@ def main(args=None):
                         i = 0
                         for i in range(0,14):
                             # Voy a partir el audio en varios audios de 1 segundo para calcular la max aplitud por segundo
-                            file_aux = file_name.replace('.wav', "_" + str(i) + ".wav")
+                            file_aux = file_name
+                            file_aux = file_aux.replace('.wav', "_" + str(i) + ".wav")
                             j = i+1
                             
                             os.system('sox ' + file_name + " " + file_aux + " trim " + str(i) + " " + str(j))
@@ -46,20 +47,22 @@ def main(args=None):
                             os.remove(file_aux)
                             
                             if amplitude > MIN_AMPLITUD:
-                                last_mark = str_to_date_time(get_last_mark())
-                                
+
                                 audio_file = file_name.replace(audio_path + "/", '')
                                 audio_file = audio_file.replace('.wav', '')
                                 new_mark_for_insert = add_seconds_to_date(str_to_date_time(audio_file), i)
-
-                                # Verifico si no se ingresó una marca anteriormente para esta jugada
-                                if check_for_insert_mark(new_mark_for_insert, last_mark, SECONDS_WAITING_FOR_ADD_NEW_MARK):
+                                
+                                if get_last_mark()!='':
+                                    last_mark = str_to_date_time(get_last_mark())
+                                
+                                    # Verifico si no se ingresó una marca anteriormente para esta jugada
+                                    if check_for_insert_mark(new_mark_for_insert, last_mark, SECONDS_WAITING_FOR_ADD_NEW_MARK):
+                                        insert_mark(get_date_str(new_mark_for_insert))
+                                else:
                                     insert_mark(get_date_str(new_mark_for_insert))
-
-                        os.remove(file_name)
-                
             var = var + 1
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
+            os.remove(file_name)
     except KeyboardInterrupt:
         print('Entro a la exception')
     finally:

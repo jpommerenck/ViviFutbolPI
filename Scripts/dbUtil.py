@@ -30,7 +30,10 @@ def get_last_mark():
     cur = conn.cursor()
     value = cur.execute('SELECT * FROM video_marks ORDER BY markdate DESC LIMIT 1;').fetchone()
     conn.close()
-    return value[0]
+    if str(value)=='None':
+        return ''
+    else:
+        return value[0]
 
 def create_configuration_table():
     conn = sqlite3.connect(path + bd_name)
@@ -66,6 +69,14 @@ def get_all_marks_not_processed():
         marks.append(row[0])
     conn.close()
     return marks
+
+def delete_all_marks():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('DELETE FROM video_marks')
+    conn.commit()
+    conn.close()
+    
 
 def get_config_value(variable):
     conn = sqlite3.connect(path + bd_name)
