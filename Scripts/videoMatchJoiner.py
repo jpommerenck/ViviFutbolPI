@@ -42,9 +42,7 @@ def join_match_video(TIME_START, TIME_FINISH):
     for file_name in file_array_match:
         print(file_name)
 
-    concatString = ""
-    for file_name in file_array_match:
-        concatString = concatString + " -cat " + file_name
+    c
 
     # Impresion para probar
     print(video)
