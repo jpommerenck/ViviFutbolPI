@@ -1,11 +1,10 @@
-from flask import Flask
-from flask import send_file
-from fileUtil import get_mp4_files_in_directory
-from fileUtil import get_jpg_files_in_directory
-from fileUtil import get_file_name_without_extension
+from flask import Flask, send_file, jsonify
+from fileUtil import get_mp4_files_in_directory, get_jpg_files_in_directory, get_file_name_without_extension
+from dbUtil import download_code_exists
 import sqlite3
 import os
 import os.path
+from utils import decode_time
 
 #Constantes de la base de datos
 #PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2016-11-12/mp4'
@@ -61,10 +60,26 @@ def get_video(name):
 #172.24.1.1:5000/validateCode/<code>
 @app.route('/validateCode/<code>', methods=['GET', 'POST'])
 def validate_code(code):
-    if code == "ABC123":
-        return ('OK', 200)
+    if(len(code) > 4):            
+        if code == "ABC123":
+            ##TODO DEBUG - sacar
+            return ('OK', 200)
+        else:
+            ##el codigo es toda la string salvo las ultimas 3 letras
+            video_code = code[:-3]
+            ##el tiempo son las ultimas tres letras
+            encrypted_time = code[-3:]
+            time = decode_time(encrypted_time)
+            if time is not None:
+                if(download_code_exists(video_code)):
+                    ##TODO marcar codigo como usado?
+                    return jsonify({"status":"ok", "time":time})
+                else:
+                    return jsonify({"status":"error", "errorMessage":"El codigo es incorrecto"})
+            else:
+                return jsonify({"status":"error", "errorMessage":"El codigo es incorrecto"})
     else:
-        return ('ERROR', 200)
+        return jsonify({"status":"error","errorMessage":"El codigo debe tener al menos 5 caracteres"})
     
 
 if __name__ == '__main__':

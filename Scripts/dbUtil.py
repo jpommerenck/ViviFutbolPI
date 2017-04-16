@@ -9,6 +9,7 @@ def create_video_mark_table():
     cur.execute('CREATE TABLE video_marks (markdate TEXT PRIMARY KEY, is_processed INTEGER)')
     conn.close()
 
+
 # Esta funcion sirve para insertar las marcas de jugadas destacadas en la base de datos
 # Ejemplo invocacion : insert_mark("2017-03-26_20-41-10")
 def insert_mark(date):
@@ -41,10 +42,77 @@ def create_configuration_table():
     cur.execute('CREATE TABLE configurations (variable TEXT PRIMARY KEY, value TEXT)')
     conn.close()
 
+def create_download_codes_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE download_codes (code TEXT PRIMARY KEY, times_used INTEGER)')
+    conn.close()
+
+def create_maintenance_tokens_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE maintenance_tokens (token TEXT PRIMARY KEY)')
+    conn.close()
+
+def insert_maintenance_token(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT token FROM maintenance_tokens WHERE token = ?", (token,))
+    existingToken = cur.fetchone()
+    if existingToken is None:
+        cur.execute('INSERT INTO maintenance_tokens VALUES("'+token+'")')
+        conn.commit()
+    conn.close()
+
+def insert_download_code(code):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT code FROM download_codes WHERE code = ?", (code,))
+    existingCode = cur.fetchone()
+    if existingCode is None:
+        cur.execute('INSERT INTO download_codes VALUES("'+code+'", 0)')
+        conn.commit()
+    conn.close()
+
+def count_available_download_codes():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM download_codes WHERE times_used = 0")
+    result = cur.fetchone()
+    conn.close()
+    return result[0]
+
+def download_code_exists(code):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT rowid FROM download_codes WHERE code=?",(code,)) 
+    data=cur.fetchone()
+    if data is None:
+        return False
+    else:
+        return True
+    
+def maintenance_token_exists(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT rowid FROM maintenance_tokens WHERE token=?",(token,)) 
+    data=cur.fetchone()
+    if data is None:
+        return False
+    else:
+        return True
+    
 def insert_configuration_value(variable, value):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute('INSERT INTO configurations VALUES("'+variable+'", "'+value+'")')
+    conn.commit()
+    conn.close()
+
+def modify_configuration_value(variable, value):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE configurations SET value = "'+value+'" WHERE variable = "'+variable+'"')
     conn.commit()
     conn.close()
 
@@ -88,6 +156,8 @@ def get_config_value(variable):
 def create_all_tables():
     create_video_mark_table()
     create_configuration_table()
+    create_download_codes_table()
+    create_maintenance_tokens_table()
 
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
@@ -110,3 +180,5 @@ def create_environment_config():
     insert_configuration_value('OWNER_TOKEN','0000')
     insert_configuration_value('MANAGEMENT_TOKEN','0000')
     insert_configuration_value('INSTALLER_TOKEN','0000')
+    insert_configuration_value('DISK_START_DELETE_SPACE','1024')
+    insert_configuration_value('DISK_STOP_DELETE_SPACE','15360')
