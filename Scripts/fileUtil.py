@@ -21,7 +21,9 @@ def get_h264_files_in_directory(directory):
 
 
 def get_mp4_files_in_directory(directory):
-    return glob.glob(directory+'/*.mp4')
+    files = glob.glob(directory+'/*.mp4')
+    files.sort(key=lambda x: os.path.getmtime(x))
+    return files
 
 
 def get_jpg_files_in_directory(directory):

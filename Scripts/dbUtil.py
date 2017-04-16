@@ -80,7 +80,7 @@ def create_all_tables():
 
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
-    #create_all_tables()
+    create_all_tables()
     insert_configuration_value('VIDEO_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Videos/')
     insert_configuration_value('PICTURES_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/')
     insert_configuration_value('TEMP_FILES_PATH','tmp')
