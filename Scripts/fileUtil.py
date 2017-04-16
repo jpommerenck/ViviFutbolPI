@@ -1,12 +1,13 @@
 import os
 import glob
-from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes
+from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date
 from os.path import basename
 from picamera import PiCamera
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/'
 PATH_CONCAT_VIDEOS = '/Concat/'
+TIME_RECORDING_VIDEO=15
 
 def get_concat_file_name(file_name):
     file_name_split = file_name.split('/')
@@ -71,6 +72,13 @@ def newest_MP4_in_directory(directory):
     else:
         return []
 
+    
+def oldest_MP4_in_directory(directory):
+    file_array = get_mp4_files_in_directory(directory)
+    if len(file_array) > 0:
+        return min(glob.iglob(directory+'*.mp4'), key=os.path.getctime)
+    else:
+        return []
 
 def get_file_name_without_extension(name):
     filename, file_extension = os.path.splitext(name)
@@ -115,3 +123,23 @@ def get_time_last_frame(newest_h264_file, picture_path):
     difference_time = get_seconds_cut(h264_time, picture_time)
     time_last_frame = convert_seconds_to_minutes(difference_time)
     return time_last_frame
+
+
+def get_next_video(video_path):
+    video_str_date = video_path.split('.mp4')[0]
+    video_str_date = video_str_date.split('/mp4/')[1]
+    video_date = str_to_date_time(video_str_date)
+    new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
+    new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+    if not os.path.exists(new_video_path):
+        new_video_date = str(new_video_date).split(' ')[0]
+        new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
+        new_video_date = str(new_video_date).split(' ')[0]
+        new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + new_video_date + '/mp4/'
+
+        if len(oldest_MP4_in_directory(new_video_path)) !=0 :
+            new_video_path = oldest_MP4_in_directory(new_video_path)[0]
+            print('---- IF new_video_path : ' + new_video_path)
+
+    return new_video_path    
+    

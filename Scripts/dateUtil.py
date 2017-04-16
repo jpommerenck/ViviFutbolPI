@@ -9,11 +9,18 @@ def get_current_date_str():
 def get_date_str(date_to_convert):
     return date_to_convert.strftime('%Y-%m-%d_%H-%M-%S')
 
-def str_to_date(date_str):
+def str_to_date_time(date_str):
     return datetime.strptime(date_str, '%Y-%m-%d_%H-%M-%S')
+
+def str_to_date(date_str):
+    return datetime.strptime(date_str, '%Y-%m-%d')
 
 def add_seconds_to_date(date_to_add, seconds_to_add):
     date_to_add += timedelta(seconds=seconds_to_add)
+    return date_to_add
+
+def add_days_to_date(date_to_add, days_to_add):
+    date_to_add += timedelta(days=days_to_add)
     return date_to_add
 
 def get_current_short_date_str():
