@@ -5,11 +5,7 @@ from dateUtil import get_current_short_date_str
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-<<<<<<< HEAD
-SECONDS_WAITING_FOR_CONVERT_VIDEO=30
-=======
 SECONDS_WAITING_FOR_CONVERT_VIDEO=15
->>>>>>> 69e60c31ee4b4213f522032b75322c3505056b42
 last_newest_file = ''
 
 try:
