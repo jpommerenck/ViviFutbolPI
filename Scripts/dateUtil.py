@@ -19,6 +19,11 @@ def add_seconds_to_date(date_to_add, seconds_to_add):
 def get_current_short_date_str():
     return datetime.now().strftime('%Y-%m-%d')
 
+def get_yesterday_short_date_str():
+    date = datetime.now()
+    yesterday = date - timedelta(days=1)
+    return yesterday.strftime('%Y-%m-%d')
+
 def get_current_time_int():
     return int(datetime.now().strftime('%H%M'))
 
