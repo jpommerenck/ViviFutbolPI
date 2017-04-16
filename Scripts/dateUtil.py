@@ -27,6 +27,17 @@ def add_seconds_to_date(date_to_add, seconds_to_add):
     date_to_add += timedelta(seconds=seconds_to_add)
     return date_to_add
 
+
+def rest_seconds_to_date(date_to_rest, seconds_to_rest):
+    date_to_rest -= timedelta(seconds=seconds_to_rest)
+    return date_to_rest
+
+
+def rest_days_to_date(date_to_rest, days_to_rest):
+    date_to_rest -= timedelta(days=days_to_rest)
+    return date_to_rest
+
+
 def add_days_to_date(date_to_add, days_to_add):
     date_to_add += timedelta(days=days_to_add)
     return date_to_add

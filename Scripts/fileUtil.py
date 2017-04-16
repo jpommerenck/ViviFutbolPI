@@ -1,6 +1,6 @@
 import os
 import glob
-from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date, convert_path_to_str_date
+from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date, convert_path_to_str_date, rest_seconds_to_date
 from os.path import basename
 from picamera import PiCamera
 
@@ -111,10 +111,12 @@ def image_monitor_device(directory, picture_path):
         camera.close()
 
 
+#Obtiene el ultimo frame del video que se esta filmando
 def get_last_frame_from_current_video(h264_file, picture_path, time_last_frame):
     os.system('avconv -ss ' + time_last_frame + ' -r 30 -i ' + h264_file + ' -t 1 ' + picture_path)
 
 
+#Obtiene la fecha del ultimo frame
 def get_time_last_frame(newest_h264_file, picture_path):
     h264_name = get_file_name(newest_h264_file)
     h264_time = get_time(h264_name)
@@ -125,11 +127,14 @@ def get_time_last_frame(newest_h264_file, picture_path):
     return time_last_frame
 
 
+#Obtiene el siguiente video filmado de otro video
 def get_next_video(video_path):
     video_str_date = convert_path_to_str_date(video_path)
     video_date = str_to_date_time(video_str_date)
+    video_str_date = video_str_date.split('_')[0]
     new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
     new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+    
     if not os.path.exists(new_video_path):
         new_video_date = str(new_video_date).split(' ')[0]
         new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
@@ -138,9 +143,11 @@ def get_next_video(video_path):
 
         if len(oldest_MP4_in_directory(new_video_path)) !=0 :
             new_video_path = oldest_MP4_in_directory(new_video_path)
-
-    return new_video_path    
     
+    return new_video_path    
+
+
+#Retorna si una marca fue creada durante ese video
 def video_contains_mark(video_date, mark):
     finish_time = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
     mark_date = str_to_date_time(mark)
@@ -148,3 +155,23 @@ def video_contains_mark(video_date, mark):
         return True
     else:
         return False
+
+
+#Obtiene el video anterior de otro video filmado
+def get_previous_video(video_path):
+    video_str_date = convert_path_to_str_date(video_path)
+    video_date = str_to_date_time(video_str_date)
+    video_str_date = video_str_date.split('_')[0]
+    new_video_date = rest_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
+    new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+    
+    if not os.path.exists(new_video_path):
+        new_video_date = str(new_video_date).split(' ')[0]
+        new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
+        new_video_date = str(new_video_date).split(' ')[0]
+        new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + new_video_date + '/mp4/'
+
+        if len(newest_MP4_in_directory(new_video_path)) !=0 :
+            new_video_path = oldest_MP4_in_directory(new_video_path)
+    
+    return new_video_path    
