@@ -17,9 +17,9 @@ try:
     camera.exposure_compensation = 25
     
     total_video = 0
-    while total_video < 2:
+    while total_video < 5:
         current_time = get_current_time_int()
-        while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
+        while (True):
             # Obtengo el path de donde se va a crear el video        
             video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + '/'
 
