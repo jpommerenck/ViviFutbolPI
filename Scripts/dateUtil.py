@@ -9,11 +9,43 @@ def get_current_date_str():
 def get_date_str(date_to_convert):
     return date_to_convert.strftime('%Y-%m-%d_%H-%M-%S')
 
-def str_to_date(date_str):
+def str_to_date_time(date_str):
     return datetime.strptime(date_str, '%Y-%m-%d_%H-%M-%S')
+
+def str_to_date(date_str):
+    return datetime.strptime(date_str, '%Y-%m-%d')
+
+
+# Obtiene la resta de 2 fechas en segundos
+def rest_date_to_seconds(date1, date2):
+    difference = date2 - date1
+    return difference.seconds
+
+
+# Toma el path de un video y obtiene la fecha del video
+def convert_path_to_str_date(video_path):
+    video_str_date = video_path.split('.mp4')[0]
+    video_str_date = video_str_date.split('/mp4/')[1]
+    return video_str_date
+
 
 def add_seconds_to_date(date_to_add, seconds_to_add):
     date_to_add += timedelta(seconds=seconds_to_add)
+    return date_to_add
+
+
+def rest_seconds_to_date(date_to_rest, seconds_to_rest):
+    date_to_rest -= timedelta(seconds=seconds_to_rest)
+    return date_to_rest
+
+
+def rest_days_to_date(date_to_rest, days_to_rest):
+    date_to_rest -= timedelta(days=days_to_rest)
+    return date_to_rest
+
+
+def add_days_to_date(date_to_add, days_to_add):
+    date_to_add += timedelta(days=days_to_add)
     return date_to_add
 
 def get_current_short_date_str():
