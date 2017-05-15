@@ -143,3 +143,5 @@ def create_environment_config():
     insert_configuration_value('OWNER_TOKEN','0000')
     insert_configuration_value('MANAGEMENT_TOKEN','0000')
     insert_configuration_value('INSTALLER_TOKEN','0000')
+    insert_configuration_value('DISK_START_DELETE_SPACE','1024')
+    insert_configuration_value('DISK_STOP_DELETE_SPACE','15360')

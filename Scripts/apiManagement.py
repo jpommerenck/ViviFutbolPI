@@ -99,6 +99,27 @@ def count_codes():
 
 
 
+                
+#172.24.1.1:5002/setSpaceLimits
+@app.route('/setSpaceLimits', methods=['POST'])
+def set_space_limits():
+    try:
+        min_space = request.form.get("min_space")
+        max_space = request.form.get("max_space")
+        if(min_space >= 1024):
+            if(max_space <= 15360):
+                modify_configuration_value("DISK_START_DELETE_SPACE", min_space)
+                modify_configuration_value("DISK_STOP_DELETE_SPACE", max_space)
+                response = {"status":"ok"}
+            else:
+                response = {"status":"error", "error":"invalidMaxLimit", "errorMessage":"El limite mayor no puede ser superior a 15 GB"}
+        else:
+            response = {"status":"error", "error":"invalidMinLimit", "errorMessage":"El limite inferior no puede ser menor a 1 GB"}
+            
+        return jsonify(response)
+    except Exception as e:
+        response = {"status":"error","error":"errorChangingSpaceLimits","errorMessage":"No se pudo modificar los limites de espacio", "exception":str(e)}
+        return jsonify(response)
 
 
 if __name__ == '__main__':
