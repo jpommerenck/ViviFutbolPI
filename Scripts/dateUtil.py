@@ -32,6 +32,9 @@ def get_time(date_to_convert):
     date_time = date_aux.split('.')[0]
     return date_time.split('-')[0] + date_time.split('-')[1] + date_time.split('-')[2]
 
+def get_current_hour():
+    return int(datetime.now().strftime('%H'))
+
 def get_time_subtraction(date_to_convert, time_recording):
     date_time = date_to_convert.split('_')[1]
     minuts_int = (int(date_time.split('-')[1])-time_recording)%60
