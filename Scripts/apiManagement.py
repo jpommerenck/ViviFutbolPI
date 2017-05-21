@@ -97,19 +97,31 @@ def count_codes():
     except Exception as e:
         return jsonify({"status":"error", "error":"errorCountingAvailableCodes", "errorMessage":"Error inesperado", "exception":str(e)})
 
-
+#172.24.1.1:5002/getSpaceLimits
+@app.route('/getSpaceLimits', methods=['POST'])
+def get_space_limits():
+    try:
+        startLimit = get_config_value("DISK_START_DELETE_SPACE")
+        endLimit = get_config_value("DISK_STOP_DELETE_SPACE")
+        min_space = request.form.get("min_space")
+        max_space = request.form.get("max_space")
+        response = {"status":"ok", "startLimit":startLimit, "endLimit":endLimit}
+        return jsonify(response)
+    except Exception as e:
+        response = {"status":"error","error":"errorChangingSpaceLimits","errorMessage":"No se pudo modificar los limites de espacio", "exception":str(e)}
+        return jsonify(response)
 
                 
 #172.24.1.1:5002/setSpaceLimits
 @app.route('/setSpaceLimits', methods=['POST'])
 def set_space_limits():
     try:
-        min_space = request.form.get("min_space")
-        max_space = request.form.get("max_space")
-        if(min_space >= 1024):
-            if(max_space <= 15360):
-                modify_configuration_value("DISK_START_DELETE_SPACE", min_space)
-                modify_configuration_value("DISK_STOP_DELETE_SPACE", max_space)
+        startLimit = int(request.form.get("startLimit"))
+        endLimit = int(request.form.get("endLimit"))
+        if(startLimit >= 1024):
+            if(endLimit <= 15360):
+                modify_configuration_value("DISK_START_DELETE_SPACE", str(startLimit))
+                modify_configuration_value("DISK_STOP_DELETE_SPACE", str(endLimit))
                 response = {"status":"ok"}
             else:
                 response = {"status":"error", "error":"invalidMaxLimit", "errorMessage":"El limite mayor no puede ser superior a 15 GB"}

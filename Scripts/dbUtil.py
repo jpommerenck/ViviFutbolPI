@@ -66,6 +66,16 @@ def count_available_download_codes():
     conn.close()
     return result[0]
 
+def download_code_exists(code):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT rowid FROM download_codes WHERE code=?",(code,)) 
+    data=cur.fetchone()
+    if data is None:
+        return False
+    else:
+        return True
+    
 def insert_configuration_value(variable, value):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
