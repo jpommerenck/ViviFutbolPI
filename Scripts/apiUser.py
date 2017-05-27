@@ -7,8 +7,8 @@ import os.path
 from utils import decode_time
 
 #Constantes de la base de datos
-#PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2016-11-12/mp4'
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/VideosPRUEBA_10/2017-04-16/mp4'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2017-05-27/mp4'
+#PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/VideosPRUEBA_10/2017-04-16/mp4'
 
 app = Flask(__name__)
 

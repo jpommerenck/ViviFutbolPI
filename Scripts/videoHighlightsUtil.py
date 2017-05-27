@@ -4,9 +4,9 @@ from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds
 from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed
 
-TIME_AFTER = 3
-TIME_BEFORE = 3
-TIME_RECORDING_VIDEO=15
+TIME_AFTER = 5
+TIME_BEFORE = 5
+TIME_RECORDING_VIDEO=300
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 FOLDER_HIGLIGHTS = 'Highlights/'
 HIGHLIGHT_NAME = 'Hightlight_'

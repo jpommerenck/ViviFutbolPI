@@ -6,9 +6,9 @@ import os
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
 PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
-TIME_RECORDING_VIDEO=15
+TIME_RECORDING_VIDEO=300
 START_RECORDING_TIME=700
-FINISH_RECORDING_TIME=2030
+FINISH_RECORDING_TIME=2200
 
 camera = PiCamera()
 

@@ -7,7 +7,7 @@ from picamera import PiCamera
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/'
 PATH_CONCAT_VIDEOS = '/Concat/'
-TIME_RECORDING_VIDEO=15
+TIME_RECORDING_VIDEO=300
 
 def get_concat_file_name(file_name):
     file_name_split = file_name.split('/')
