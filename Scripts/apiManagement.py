@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
-from flask import send_file
+from flask import Flask, request, jsonify, send_file
+from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
-from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes
+from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists
 import time
 import json
 
@@ -13,10 +13,12 @@ PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/'
 
 
 app = Flask(__name__)
+auth = HTTPTokenAuth('Token')
 
 
 #172.24.1.1:5002/getTime
 @app.route('/getTime', methods=['GET', 'POST'])
+@auth.login_required
 def get_time():
     response = {"status":"ok", "currentTime": time.strftime('%H') + ":" + time.strftime('%M')}
     return jsonify(response)                
@@ -24,6 +26,7 @@ def get_time():
 
 #172.24.1.1:5002/postTime
 @app.route('/postTime', methods=['POST'])
+@auth.login_required
 def post_time():
     try:
         hora = request.form.get("time")
@@ -39,6 +42,7 @@ def post_time():
                 
 #172.24.1.1:5002/changeRecordingTimes
 @app.route('/setRecordingTimes', methods=['POST'])
+@auth.login_required
 def set_recording_times():
     try:
         startTime = request.form.get("startTime")
@@ -54,6 +58,7 @@ def set_recording_times():
                 
 #172.24.1.1:5002/getRecordingTimes
 @app.route('/getRecordingTimes', methods=['POST'])
+@auth.login_required
 def get_recording_times():
     try:
         startTime = get_config_value("START_RECORDING_TIME")
@@ -66,6 +71,7 @@ def get_recording_times():
 
 #172.24.1.1:5002/getImageMonitorDevice
 @app.route('/getImageMonitorDevice', methods=['GET', 'POST'])
+@auth.login_required
 def get_image_monitor_device():
     try:
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
@@ -77,6 +83,7 @@ def get_image_monitor_device():
 
 #172.24.1.1:5002/uploadCodes
 @app.route('/uploadCodes', methods=['GET', 'POST'])
+@auth.login_required
 def upload_codes():
     try:
         codes = json.loads(request.form.get("codes"))
@@ -88,6 +95,7 @@ def upload_codes():
 
 #172.24.1.1:5002/countCodes
 @app.route('/countCodes', methods=['GET', 'POST'])
+@auth.login_required
 def count_codes():
     try:
         count = count_available_download_codes()
@@ -99,6 +107,7 @@ def count_codes():
 
 #172.24.1.1:5002/getSpaceLimits
 @app.route('/getSpaceLimits', methods=['POST'])
+@auth.login_required
 def get_space_limits():
     try:
         startLimit = get_config_value("DISK_START_DELETE_SPACE")
@@ -114,6 +123,7 @@ def get_space_limits():
                 
 #172.24.1.1:5002/setSpaceLimits
 @app.route('/setSpaceLimits', methods=['POST'])
+@auth.login_required
 def set_space_limits():
     try:
         startLimit = int(request.form.get("startLimit"))
@@ -132,6 +142,19 @@ def set_space_limits():
     except Exception as e:
         response = {"status":"error","error":"errorChangingSpaceLimits","errorMessage":"No se pudo modificar los limites de espacio", "exception":str(e)}
         return jsonify(response)
+
+
+@auth.verify_token
+def verify_token(token):
+    ##TODO return maintenance_token_exists(token)    
+    return True
+    
+
+@auth.error_handler
+def auth_error():
+    response = jsonify({"status":"error", "error":"wrongToken", "errorMessage":"Usted no esta autorizado a realizar esta accion"})
+    response.status_code = 200
+    return response
 
 
 if __name__ == '__main__':

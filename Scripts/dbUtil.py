@@ -48,6 +48,22 @@ def create_download_codes_table():
     cur.execute('CREATE TABLE download_codes (code TEXT PRIMARY KEY, times_used INTEGER)')
     conn.close()
 
+def create_maintenance_tokens_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE maintenance_tokens (token TEXT PRIMARY KEY)')
+    conn.close()
+
+def insert_maintenance_token(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT token FROM maintenance_tokens WHERE token = ?", (token,))
+    existingToken = cur.fetchone()
+    if existingToken is None:
+        cur.execute('INSERT INTO maintenance_tokens VALUES("'+token+'")')
+        conn.commit()
+    conn.close()
+
 def insert_download_code(code):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -70,6 +86,16 @@ def download_code_exists(code):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute("SELECT rowid FROM download_codes WHERE code=?",(code,)) 
+    data=cur.fetchone()
+    if data is None:
+        return False
+    else:
+        return True
+    
+def maintenance_token_exists(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT rowid FROM maintenance_tokens WHERE token=?",(token,)) 
     data=cur.fetchone()
     if data is None:
         return False
@@ -131,6 +157,7 @@ def create_all_tables():
     create_video_mark_table()
     create_configuration_table()
     create_download_codes_table()
+    create_maintenance_tokens_table()
 
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
