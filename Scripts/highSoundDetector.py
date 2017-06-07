@@ -9,7 +9,7 @@ from dbUtil import get_last_mark, insert_mark
 
 
 PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
-SECONDS_WAITING_FOR_CONVERT_VIDEO=300
+SECONDS_WAITING_FOR_CONVERT_VIDEO=15
 SECONDS_WAITING_FOR_ADD_NEW_MARK=5
 MIN_AMPLITUD = 0.30
 
@@ -19,7 +19,7 @@ def main(args=None):
     try:
         var = 0
         last_newest_file = ''
-        while var < 10 :
+        while var < 1000 :
             # Ubicación de los audios para generar las marcas
             audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str()
             # Obtengo todos los audios no procesados

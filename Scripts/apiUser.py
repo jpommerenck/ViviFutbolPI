@@ -5,10 +5,10 @@ import sqlite3
 import os
 import os.path
 from utils import decode_time
+from dateUtil import get_current_date_str, get_current_short_date_str
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2017-05-27/mp4'
-#PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/VideosPRUEBA_10/2017-04-16/mp4'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/' + get_current_short_date_str() + '/mp4/Highlights'
 
 app = Flask(__name__)
 
@@ -31,6 +31,7 @@ def get_images():
     
     newDirectoryName = "tmp"
     newDirectory = directory + "/" + newDirectoryName
+    phone = request.form.get("phone")
     if(not os.path.exists(newDirectory)):
         os.makedirs(newDirectory)
         
@@ -51,6 +52,7 @@ def get_video(name):
     name = name.split('.')[0] + ".mp4"
     directory = PATH_VIDEO_LOCALIZATION
     filePath = directory + "/" + name
+    phone = request.form.get("phone")
     if os.path.isfile(filePath):
         return send_file(filePath, mimetype='video/mp4')
     else:
@@ -60,6 +62,7 @@ def get_video(name):
 #172.24.1.1:5000/validateCode/<code>
 @app.route('/validateCode/<code>', methods=['GET', 'POST'])
 def validate_code(code):
+    phone = request.form.get("phone")
     if(len(code) > 4):            
         if code == "ABC123":
             ##TODO DEBUG - sacar

@@ -5,12 +5,12 @@ from dateUtil import get_current_short_date_str
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-SECONDS_WAITING_FOR_CONVERT_VIDEO=300
+SECONDS_WAITING_FOR_CONVERT_VIDEO=15
 last_newest_file = ''
 
 try:
     var = 0
-    while var < 10 :
+    while var < 2000 :
         video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         video_path_mp4 = video_path + '/mp4/'
         file_array = get_h264_files_in_directory(video_path)
@@ -32,10 +32,10 @@ try:
 
                     #Convierte el video de .264 a .mp4
                     os.system('MP4Box -add '+ file_name +':fps=30 '+ aux_file_name)
-                    #Agrega el audio al video
                     if os.path.exists(audio_file_name):
                         os.system('avconv -i ' + aux_file_name + ' -i ' + audio_file_name + ' -vcodec copy -strict experimental -shortest ' + new_file_name)
-
+                    os.system('avconv -i ' + aux_file_name + ' -vcodec copy -strict experimental -shortest ' + new_file_name)
+                    
                     #Elimino los archivos temporales
                     delete_file(file_name)
                     delete_file(aux_file_name)

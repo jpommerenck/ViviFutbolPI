@@ -33,12 +33,9 @@ try:
                 # En caso de no existir el directorio lo creo
                 os.makedirs(audio_path)
 
-            if total_video < 5:
-                camera.start_recording(video_path + get_current_date_str() + '.h264', format='h264', quality=25, intra_period=10)
-            else:
-                camera.start_recording(video_path + get_current_date_str() + '.h264', format='h264', quality=23, intra_period=10)
-
+            camera.start_recording(video_path + get_current_date_str() + '.h264', format='h264', quality=23, intra_period=10)
             os.system('arecord -D plughw:1 --duration=' + str(TIME_RECORDING_VIDEO) + ' -f cd -vv ' + audio_path + get_current_date_str() + '.wav')
+            
             if os.path.exists(audio_path):
                 camera.stop_recording()
             else :

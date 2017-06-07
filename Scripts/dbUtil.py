@@ -145,7 +145,7 @@ def delete_all_marks():
     conn.commit()
     conn.close()
     
-
+#Ejemplo get_config_value('START_RECORDING_TIME')
 def get_config_value(variable):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -159,6 +159,30 @@ def create_all_tables():
     create_download_codes_table()
     create_maintenance_tokens_table()
 
+#id date user rol action
+def create_log_activity_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE log_activity (date_time DATETIME, type TEXT, user TEXT, rol TEXT, action TEXT)')
+    conn.close()
+
+def log_info(date, user, rol, action):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('INSERT INTO configurations VALUES('+date+', "INFO", '+user+', '+rol+', '+action+'")')
+    conn.commit()
+    conn.close()
+
+def log_error(user, rol, action):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('INSERT INTO configurations VALUES('+date+', "ERROR", '+user+', '+rol+', '+action+'")')
+    conn.commit()
+    conn.close()
+
+def delete_old_log():
+
+    
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
     create_all_tables()
