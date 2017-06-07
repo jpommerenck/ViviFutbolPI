@@ -1,4 +1,5 @@
 import sqlite3
+from dateUtil import get_current_date_in_server_format_str
 
 path = "/home/pi/ViviFutbolLocal/BD/"
 bd_name = "vivifutbol.db"
@@ -48,6 +49,19 @@ def create_download_codes_table():
     cur.execute('CREATE TABLE download_codes (code TEXT PRIMARY KEY, times_used INTEGER)')
     conn.close()
 
+def create_used_codes_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE used_download_codes (code TEXT PRIMARY KEY, times_used INTEGER, downloads INTEGER, first_used TEXT, last_used TEXT, sent INTEGER)')
+    conn.close()
+    
+
+def create_user_code_use_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE user_code_uses (code TEXT, phone TEXT, date TEXT, sent INTEGER, PRIMARY KEY(code, phone))')
+    conn.close()
+    
 def create_maintenance_tokens_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -71,6 +85,39 @@ def insert_download_code(code):
     existingCode = cur.fetchone()
     if existingCode is None:
         cur.execute('INSERT INTO download_codes VALUES("'+code+'", 0)')
+        conn.commit()
+    conn.close()
+
+def code_used(code, phone):
+    currentDate = get_current_date_in_server_format_str()
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM user_code_uses WHERE code = "'+code+'" AND phone = "'+phone+'"')
+    existingUse = cur.fetchone()
+    if existingUse is None:
+        cur.execute('INSERT INTO user_code_uses VALUES("'+code+'", "'+phone+'", "'+get_current_date_in_server_format_str()+'", 0)')
+        conn.commit()
+    cur.execute("SELECT * FROM used_download_codes WHERE code = ?", (code,))
+    existingCode = cur.fetchone()
+    if existingCode is None:
+        cur.execute('INSERT INTO used_download_codes VALUES("'+code+'", 1, 0, "'+currentDate+'", "'+currentDate+'", 0)')
+        conn.commit()
+    else:
+        timesUsed = existingCode[1]
+        timesUsed = timesUsed + 1
+        cur.execute('UPDATE used_download_codes SET times_used = '+str(timesUsed)+', last_used = "'+currentDate+'" WHERE code = ?', (code,))
+        conn.commit()
+    conn.close()
+
+def code_download(code):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM used_download_codes WHERE code = ?", (code,))
+    existingCode = cur.fetchone()
+    if existingCode is not None:
+        downloads = existingCode[2]
+        downloads = downloads + 1
+        cur.execute('UPDATE used_download_codes SET downloads = '+str(downloads)+' WHERE code = ?', (code,))
         conn.commit()
     conn.close()
 
@@ -129,6 +176,41 @@ def get_all_marks_between_dates(start, finish):
     conn.close()
     return marks
 
+def get_used_codes():
+    codes = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM user_code_uses WHERE(sent = 0)'):
+        code = {
+            "code": row[0],
+            "phone": row[1],
+            "date":row[2]
+        }
+        codes.append(code)
+    conn.close()
+    return codes
+
+def get_used_codes_without_downloads():
+    codes = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM used_download_codes WHERE (downloads = 0 AND sent = 0)'):
+        code = {
+            "code": row[0],
+            "timesAccessed": row[1],
+            "firstUse":row[3],
+            "lastUse":row[4]
+        }
+        codes.append(code)
+    conn.close()
+    return codes
+
+def mark_codes_as_sent():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE used_download_codes SET sent = 1 WHERE (downloads = 0 AND sent = 0)')
+    cur.execute('UPDATE user_code_uses SET sent = 1')
+
 def get_all_marks_not_processed():
     marks = []
     conn = sqlite3.connect(path + bd_name)
@@ -158,6 +240,8 @@ def create_all_tables():
     create_configuration_table()
     create_download_codes_table()
     create_maintenance_tokens_table()
+    create_used_codes_table()
+    create_user_code_use_table
 
 #id date user rol action
 def create_log_activity_table():

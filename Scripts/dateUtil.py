@@ -6,6 +6,9 @@ import os
 def get_current_date_str():
     return datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
+def get_current_date_in_server_format_str():
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
 def get_date_str(date_to_convert):
     return date_to_convert.strftime('%Y-%m-%d_%H-%M-%S')
 
