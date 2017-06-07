@@ -2,6 +2,7 @@ import time
 import os
 from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds
+from dbUtil import log_error
 
 TIME_START = '2017-06-03_21-00-00'
 TIME_RECORDING_VIDEO=15

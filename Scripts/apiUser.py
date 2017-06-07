@@ -13,23 +13,6 @@ PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/' + get_current_short
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    try:
-        marks = []
-        conn = sqlite3.connect("vivifutbol.db")
-        cur = conn.cursor()
-        to_return = ""
-        for row in cur.execute('SELECT * FROM video_marks'):
-            to_return = to_return + row[0] + ","
-        conn.close()
-        return to_return
-    except Exception as e:
-        phone = request.form.get("phone")
-        log_error(phone, 'OWNER', 'apiUser.py - index()', str(e))
-        response = {"status":"error","error":"errorGettingImages","errorMessage":"No se pudieron obtener las imagenes", "exception":str(e)}
-        return jsonify(response)
-
 
 #172.24.1.1:5000/getImages
 @app.route('/getImages', methods=['GET', 'POST'])
@@ -51,13 +34,17 @@ def get_images():
 
         zipName = "thumbs.zip"
         os.system("cd "+directory+"; zip "+zipName+" "+newDirectoryName+"/*")
+        log_info(phone, 'USER', 'apiUser.py - get_images()')
 
-        log_info(phone, 'USER', 'get_images')
         return send_file(directory+"/"+zipName, mimetype='application/zip')
     except Exception as e:
         phone = request.form.get("phone")
-        log_error(phone, 'OWNER', 'get_images', str(e))
-        response = {"status":"error","error":"errorGettingImages","errorMessage":"No se pudieron obtener las imagenes", "exception":str(e)}
+        log_error(phone, 'OWNER', 'apiUser.py - get_images()', str(e))
+        response = {
+            "status":"error",
+            "error":"errorGettingImages",
+            "errorMessage":"No se pudieron obtener las imagenes",
+            "exception":str(e)}
         return jsonify(response)
 
 
@@ -72,15 +59,19 @@ def get_video(name):
         filePath = directory + "/" + name
         phone = request.form.get("phone")
         if os.path.isfile(filePath):
-            log_info(phone, 'USER', 'get_video')
+            log_info(phone, 'USER', 'apiUser.py - get_video()')
             return send_file(filePath, mimetype='video/mp4')
         else:
-            log_error(phone, 'OWNER', 'get_images', 'No se encontro el video ' + name)
+            log_error(phone, 'USER', 'apiUser.py - get_video()', 'No se encontro el video ' + name)
             return ('',204)
     except Exception as e:
         phone = request.form.get("phone")
-        log_error(phone, 'OWNER', 'get_images', str(e))
-        response = {"status":"error","error":"errorGettingVideo","errorMessage":"No se  pudo obtener el video", "exception":str(e)}
+        log_error(phone, 'USER', 'apiUser.py - get_video()', str(e))
+        response = {
+            "status":"error",
+            "error":"errorGettingVideo",
+            "errorMessage":"No se  pudo obtener el video",
+            "exception":str(e)}
         return jsonify(response)
 
 
@@ -92,7 +83,7 @@ def validate_code(code):
         if(len(code) > 4):            
             if code == "ABC123":
                 ##TODO DEBUG - sacar
-                log_info(phone, 'USER', 'validate_code')
+                log_info(phone, 'USER', 'apiUser.py - validate_code()')
                 return ('OK', 200)
             else:
                 ##el codigo es toda la string salvo las ultimas 3 letras
@@ -103,21 +94,34 @@ def validate_code(code):
                 if time is not None:
                     if(download_code_exists(video_code)):
                         ##code_used(video_code)
-                        log_info(phone, 'USER', 'validate_code')
-                        return jsonify({"status":"ok", "time":time})
+                        log_info(phone, 'USER', 'apiUser.py - validate_code()')
+                        return jsonify({
+                            "status":"ok",
+                            "time":time})
                     else:
-                        log_error(phone, 'OWNER', 'get_images', 'El codigo ' + code +  ' es incorrecto')
-                        return jsonify({"status":"error", "errorMessage":"El codigo es incorrecto"})
+                        log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo ' + code +  ' es incorrecto')
+                        return jsonify({
+                            "status":"error",
+                            "errorMessage":"El codigo es incorrecto"})
                 else:
-                    log_error(phone, 'OWNER', 'get_images', 'El codigo ' + code +  ' es incorrecto')
-                    return jsonify({"status":"error", "errorMessage":"El codigo es incorrecto"})
+                    log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo ' + code +  ' es incorrecto')
+                    return jsonify({
+                        "status":"error",
+                        "errorMessage":"El codigo es incorrecto"})
         else:
-            log_error(phone, 'OWNER', 'get_images', 'El codigo debe tener al menos 5 caracteres')
-            return jsonify({"status":"error","errorMessage":"El codigo debe tener al menos 5 caracteres"})
+            log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo debe tener al menos 5 caracteres')
+
+            return jsonify({
+                "status":"error",
+                "errorMessage":"El codigo debe tener al menos 5 caracteres"})
     except Exception as e:
         phone = request.form.get("phone")
-        log_error(phone, 'OWNER', 'validate_code', str(e))
-        response = {"status":"error","error":"errorValidatingCOde","errorMessage":"No se pudo validar el codigo", "exception":str(e)}
+        log_error(phone, 'USER', 'apiUser.py - validate_code()', str(e))
+        response = {
+            "status":"error",
+            "error":"errorValidatingCOde",
+            "errorMessage":"No se pudo validar el codigo",
+            "exception":str(e)}
         return jsonify(response)
     
 

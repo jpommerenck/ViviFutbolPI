@@ -5,7 +5,7 @@ import re
 import time
 from dateUtil import get_current_short_date_str, add_seconds_to_date, get_current_date_str, str_to_date_time, check_for_insert_mark, get_date_str
 from fileUtil import get_wav_files_in_directory, newest_wav_in_directory
-from dbUtil import get_last_mark, insert_mark
+from dbUtil import get_last_mark, insert_mark, log_error
 
 
 PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'

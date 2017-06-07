@@ -3,6 +3,7 @@ import glob
 from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date, convert_path_to_str_date, rest_seconds_to_date
 from os.path import basename
 from picamera import PiCamera
+from dbUtil import log_error
 
 # Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/'

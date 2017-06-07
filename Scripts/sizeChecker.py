@@ -1,7 +1,7 @@
 import shutil
 import os
 from dateUtil import get_current_short_date_str, get_yesterday_short_date_str
-from dbUtil import get_config_value
+from dbUtil import get_config_value, log_error
 
 MB_MULTIPLIER = 1024*1024
 FOLDERS_PATH = '/home/pi/ViviFutbolLocal/VideosEXPO/'
