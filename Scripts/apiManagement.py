@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
-from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, log_info, log_error, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent
+from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, log_info, log_error, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent, get_log_activity
 import time
 import json
 
@@ -21,11 +21,15 @@ auth = HTTPTokenAuth('Token')
 @auth.login_required
 def get_time():
     try:
+        #user rol action
         email = request.form.get("email")
         response = {"status":"ok", "currentTime": time.strftime('%H') + ":" + time.strftime('%M')}
+        log_info(email, 'MANAGEMENT', 'get_time')
         return jsonify(response)
-    except:
-        response = {"status":"error","error":"errorGettingTime","errorMessage":"No se pudo obtener la hora del dispositivo"}
+    except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'get_time', str(e))
+        response = {"status":"error","error":"errorGettingTime","errorMessage":"No se pudo obtener la hora del dispositivo", "exception":str(e)}
         return jsonify(response)
 
 
@@ -40,9 +44,12 @@ def post_time():
         minutosPI = hora.split(':')[1]
         set_time(horaPI, minutosPI)
         response = {"status":"ok", "newTime":time.strftime('%H') + ":" + time.strftime('%M')}
+        log_info(email, 'MANAGEMENT', 'post_time')
         return jsonify(response)
-    except:
-        response = {"status":"error","error":"errorSettingTime","errorMessage":"No se pudo modificar la hora del dispositivo"}
+    except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'post_time', str(e))
+        response = {"status":"error","error":"errorSettingTime","errorMessage":"No se pudo modificar la hora del dispositivo", "exception":str(e)}
         return jsonify(response)
 
                 
@@ -57,8 +64,11 @@ def set_recording_times():
         modify_configuration_value("START_RECORDING_TIME", startTime)
         modify_configuration_value("FINISH_RECORDING_TIME", endTime)
         response = {"status":"ok"}
+        log_info(email, 'MANAGEMENT', 'set_recording_times')
         return jsonify(response)
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'set_recording_times', str(e))
         response = {"status":"error","error":"errorChangingRecordingTimes","errorMessage":"No se pudo modificar las horas de grabacion", "exception":str(e)}
         return jsonify(response)
 
@@ -72,9 +82,12 @@ def get_recording_times():
         endTime = get_config_value("FINISH_RECORDING_TIME")
         email = request.form.get("email")
         response = {"status":"ok", "startTime":startTime, "endTime":endTime}
+        log_info(email, 'MANAGEMENT', 'get_recording_times')
         return jsonify(response)
     except:
-        response = {"status":"error","error":"errorGettingRecordingTimes","errorMessage":"No se pudo obtener las horas de grabacion"}
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'get_recording_times', str(e))
+        response = {"status":"error","error":"errorGettingRecordingTimes","errorMessage":"No se pudo obtener las horas de grabacion", "exception":str(e)}
         return jsonify(response)
 
 
@@ -87,8 +100,11 @@ def get_image_monitor_device():
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         image_monitor_device(video_directory, picture_path)
+        log_info(email, 'MANAGEMENT', 'get_image_monitor_device')
         return send_file(picture_path, mimetype='image/jpeg')
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'get_image_monitor_device', str(e))
         return jsonify({"status":"error", "error":"errorMonitoringDevice", "errorMessage":"Error inesperado", "exception":str(e)})
 
 
@@ -101,8 +117,11 @@ def upload_codes():
         codes = json.loads(request.form.get("codes"))
         for code in codes:
             insert_download_code(code['code'])
+        log_info(email, 'MANAGEMENT', 'upload_codes')
         return jsonify({"status":"ok", "codes":codes})        
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'upload_codes', str(e))
         return jsonify({"status":"error", "error":"errorUploadingCodes", "errorMessage":"Error inesperado", "exception":str(e)})
 
 
@@ -115,8 +134,11 @@ def count_codes():
         email = request.form.get("email")
         ##TODO obtener deviceId        
         deviceId = 1
+        log_info(email, 'MANAGEMENT', 'count_codes')
         return jsonify({"status":"ok", "count":count, "deviceId":deviceId})        
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'count_codes', str(e))
         return jsonify({"status":"error", "error":"errorCountingAvailableCodes", "errorMessage":"Error inesperado", "exception":str(e)})
 
 
@@ -131,8 +153,11 @@ def get_space_limits():
         max_space = request.form.get("max_space")
         email = request.form.get("email")
         response = {"status":"ok", "startLimit":startLimit, "endLimit":endLimit}
+        log_info(email, 'MANAGEMENT', 'get_space_limits')
         return jsonify(response)
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'get_space_limits', str(e))
         response = {"status":"error","error":"errorChangingSpaceLimits","errorMessage":"No se pudo modificar los limites de espacio", "exception":str(e)}
         return jsonify(response)
 
@@ -157,22 +182,31 @@ def set_space_limits():
                 response = {"status":"error", "error":"invalidMinLimit", "errorMessage":"El limite para empezar a borrar no puede ser menor a 1 GB"}
         else:
             response = {"status":"error", "error":"invalidValues", "errorMessage":"El limite para empezar a borrar debe ser menor al limite para terminar"}
+        log_info(email, 'MANAGEMENT', 'set_space_limits')
         return jsonify(response)
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'set_space_limits', str(e))
         response = {"status":"error","error":"errorChangingSpaceLimits","errorMessage":"No se pudo modificar los limites de espacio", "exception":str(e)}
         return jsonify(response)
+
 
 #172.24.1.1:5002/downloadData
 @app.route('/downloadData', methods=['POST'])
 @auth.login_required
 def download_data():
     try:
+        email = request.form.get("email")
         usedCodes = get_used_codes()
         usedCodesWithoutDownloads = get_used_codes_without_downloads()
+        logActivity = get_log_activity()
         mark_codes_as_sent()
-        response = {"status":"ok", "usedCodes":usedCodes, "usedCodesWithoutDownload":usedCodesWithoutDownloads}
+        response = {"status":"ok", "usedCodes":usedCodes, "usedCodesWithoutDownload":usedCodesWithoutDownloads, "logActivity":logActivity}
+        log_info(email, 'MANAGEMENT', 'download_data')
         return jsonify(response)
     except Exception as e:
+        email = request.form.get("email")
+        log_error(email, 'MANAGEMENT', 'download_data', str(e))
         response = {"status":"error","error":"errorDownloadingData","errorMessage":"No se pudieron descargar los datos", "exception":str(e)}
         return jsonify(response)
     
