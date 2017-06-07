@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
-from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists
+from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent
 import time
 import json
 
@@ -128,22 +128,37 @@ def set_space_limits():
     try:
         startLimit = int(request.form.get("startLimit"))
         endLimit = int(request.form.get("endLimit"))
-        if(startLimit >= 1024):
-            if(endLimit <= 15360):
-                modify_configuration_value("DISK_START_DELETE_SPACE", str(startLimit))
-                modify_configuration_value("DISK_STOP_DELETE_SPACE", str(endLimit))
-                response = {"status":"ok"}
+        if(startLimit < endLimit):
+            if(startLimit >= 1024):
+                if(endLimit <= 15360):
+                    modify_configuration_value("DISK_START_DELETE_SPACE", str(startLimit))
+                    modify_configuration_value("DISK_STOP_DELETE_SPACE", str(endLimit))
+                    response = {"status":"ok"}
+                else:
+                    response = {"status":"error", "error":"invalidMaxLimit", "errorMessage":"El limite para terminar de borrar no puede ser superior a 15 GB"}
             else:
-                response = {"status":"error", "error":"invalidMaxLimit", "errorMessage":"El limite mayor no puede ser superior a 15 GB"}
+                response = {"status":"error", "error":"invalidMinLimit", "errorMessage":"El limite para empezar a borrar no puede ser menor a 1 GB"}
         else:
-            response = {"status":"error", "error":"invalidMinLimit", "errorMessage":"El limite inferior no puede ser menor a 1 GB"}
-            
+            response = {"status":"error", "error":"invalidValues", "errorMessage":"El limite para empezar a borrar debe ser menor al limite para terminar"}
         return jsonify(response)
     except Exception as e:
         response = {"status":"error","error":"errorChangingSpaceLimits","errorMessage":"No se pudo modificar los limites de espacio", "exception":str(e)}
         return jsonify(response)
 
-
+#172.24.1.1:5002/downloadData
+@app.route('/downloadData', methods=['POST'])
+@auth.login_required
+def download_data():
+    try:
+        usedCodes = get_used_codes()
+        usedCodesWithoutDownloads = get_used_codes_without_downloads()
+        mark_codes_as_sent()
+        response = {"status":"ok", "usedCodes":usedCodes, "usedCodesWithoutDownload":usedCodesWithoutDownloads}
+        return jsonify(response)
+    except Exception as e:
+        response = {"status":"error","error":"errorDownloadingData","errorMessage":"No se pudieron descargar los datos", "exception":str(e)}
+        return jsonify(response)
+    
 @auth.verify_token
 def verify_token(token):
     ##TODO return maintenance_token_exists(token)    

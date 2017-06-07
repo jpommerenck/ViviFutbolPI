@@ -1,13 +1,13 @@
 from flask import Flask, send_file, jsonify
 from fileUtil import get_mp4_files_in_directory, get_jpg_files_in_directory, get_file_name_without_extension
-from dbUtil import download_code_exists
+from dbUtil import download_code_exists, code_used, code_download
 import sqlite3
 import os
 import os.path
 from utils import decode_time
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2017-05-27/mp4'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2017-04-01/mp4'
 #PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/VideosPRUEBA_10/2017-04-16/mp4'
 
 app = Flask(__name__)
@@ -48,6 +48,8 @@ def get_images():
 #172.24.1.1:5000/getImages/<name>
 @app.route('/getVideo/<name>', methods=['GET', 'POST'])
 def get_video(name):
+    ## TODO hay que ver como recibimos el codigo aca tmb
+    ##code_download(video_code)
     name = name.split('.')[0] + ".mp4"
     directory = PATH_VIDEO_LOCALIZATION
     filePath = directory + "/" + name
@@ -72,7 +74,7 @@ def validate_code(code):
             time = decode_time(encrypted_time)
             if time is not None:
                 if(download_code_exists(video_code)):
-                    ##TODO marcar codigo como usado?
+                    ##code_used(video_code)
                     return jsonify({"status":"ok", "time":time})
                 else:
                     return jsonify({"status":"error", "errorMessage":"El codigo es incorrecto"})
