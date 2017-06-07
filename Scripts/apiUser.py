@@ -1,4 +1,4 @@
-from flask import Flask, send_file, jsonify
+from flask import Flask, send_file, jsonify, request
 from fileUtil import get_mp4_files_in_directory, get_jpg_files_in_directory, get_file_name_without_extension
 from dbUtil import download_code_exists, code_used, code_download
 import sqlite3
@@ -6,6 +6,7 @@ import os
 import os.path
 from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
+from dbUtil import log_info, log_error
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/' + get_current_short_date_str() + '/mp4/Highlights'
@@ -14,14 +15,20 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    marks = []
-    conn = sqlite3.connect("vivifutbol.db")
-    cur = conn.cursor()
-    to_return = ""
-    for row in cur.execute('SELECT * FROM video_marks'):
-        to_return = to_return + row[0] + ","
-    conn.close()
-    return to_return
+    try:
+        marks = []
+        conn = sqlite3.connect("vivifutbol.db")
+        cur = conn.cursor()
+        to_return = ""
+        for row in cur.execute('SELECT * FROM video_marks'):
+            to_return = to_return + row[0] + ","
+        conn.close()
+        return to_return
+    except Exception as e:
+        phone = request.form.get("phone")
+        log_error(phone, 'OWNER', 'apiUser.py - index()', str(e))
+        response = {"status":"error","error":"errorGettingImages","errorMessage":"No se pudieron obtener las imagenes", "exception":str(e)}
+        return jsonify(response)
 
 
 #172.24.1.1:5000/getImages

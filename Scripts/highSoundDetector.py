@@ -15,7 +15,6 @@ MIN_AMPLITUD = 0.30
 
 
 def main(args=None):
-
     try:
         var = 0
         last_newest_file = ''

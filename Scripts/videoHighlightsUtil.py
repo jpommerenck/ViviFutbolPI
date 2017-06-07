@@ -22,7 +22,6 @@ while var<10000:
     last_mark_date = ''
     video_path = ''
     total_record = TIME_AFTER + TIME_BEFORE
-    
 
     marks = get_all_marks_not_processed()
     
@@ -47,10 +46,8 @@ while var<10000:
         
         for video in file_array:
             video_str_date = convert_path_to_str_date(video)
-            print(video_str_date)
             video_date = str_to_date_time(video_str_date)
-            print("video_str_date")
-
+            
             # Consulto si la marca se realizo cuando se filmaba el video
             if video_contains_mark(video_date, row):
                 #add_seconds_to_date, rest_seconds_to_date

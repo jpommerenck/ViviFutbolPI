@@ -253,12 +253,9 @@ def create_log_activity_table():
 
 def log_info(user, rol, action):
     date = get_current_date_in_server_format_str()
-    date = get_current_date_str()
-    last_date = str(rest_days_to_date(str_to_date_time(date), 31))
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    #cur.execute('INSERT INTO log_activity VALUES("' + date + '","INFO","' + user + '","' + rol + '","' + action + '","")')
-    cur.execute('INSERT INTO log_activity VALUES("' + last_date + '","INFO","' + user + '","' + rol + '","' + action + '","")')
+    cur.execute('INSERT INTO log_activity VALUES("' + date + '","INFO","' + user + '","' + rol + '","' + action + '","")')
     conn.commit()
     conn.close()
 
@@ -267,7 +264,7 @@ def log_error(user, rol, action, message):
     date = get_current_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO log_activity VALUES("' + date + '", "ERROR", "' + user + '", "' + rol + '", "' + action + '", "' + message + '")')
+    cur.execute('INSERT INTO log_activity VALUES("' + date + '", "ERROR", "' + user + '", "' + rol + '", "' + action + '", "' + str(message) + '")')
     conn.commit()
     conn.close()
 

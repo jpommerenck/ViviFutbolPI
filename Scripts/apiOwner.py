@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, request
 from flask import send_file
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str
+from dbUtil import log_info, log_error
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
@@ -17,14 +18,19 @@ def get_image_monitor_device():
         email = request.form.get("email")
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
-        email = request.form.get("email")
         image_monitor_device(video_directory, picture_path)
-        log_info(email, 'OWNER', 'get_image_monitor_device')
+        log_info(email, 'OWNER', 'apiOwner.py - get_image_monitor_device()')
+
         return send_file(picture_path, mimetype='image/jpeg')
     except Exception as e:
         email = request.form.get("email")
-        log_error(email, 'OWNER', 'get_image_monitor_device', str(e))
-        response = {"status":"error","error":"errorGettingImageMonitorDevice","errorMessage":"No se pudo obtener la imagen del dispositivo", "exception":str(e)}
+        log_error(email, 'OWNER', 'apiOwner.py - get_image_monitor_device()', str(e))
+        response = {
+            "status":"error",
+            "error":"errorGettingImageMonitorDevice",
+            "errorMessage":"No se pudo obtener la imagen del dispositivo",
+            "exception":str(e)}
+
         return jsonify(response)
 
 if __name__ == '__main__':
