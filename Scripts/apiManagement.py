@@ -2,11 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
-<<<<<<< HEAD
-from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, log_info, log_error
-=======
-from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent
->>>>>>> fb3ea15f4745ce9df0732e987376b845af3c239f
+from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, log_info, log_error, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent
 import time
 import json
 
@@ -148,14 +144,7 @@ def set_space_limits():
     try:
         startLimit = int(request.form.get("startLimit"))
         endLimit = int(request.form.get("endLimit"))
-<<<<<<< HEAD
         email = request.form.get("email")
-        if(startLimit >= 1024):
-            if(endLimit <= 15360):
-                modify_configuration_value("DISK_START_DELETE_SPACE", str(startLimit))
-                modify_configuration_value("DISK_STOP_DELETE_SPACE", str(endLimit))
-                response = {"status":"ok"}
-=======
         if(startLimit < endLimit):
             if(startLimit >= 1024):
                 if(endLimit <= 15360):
@@ -164,7 +153,6 @@ def set_space_limits():
                     response = {"status":"ok"}
                 else:
                     response = {"status":"error", "error":"invalidMaxLimit", "errorMessage":"El limite para terminar de borrar no puede ser superior a 15 GB"}
->>>>>>> fb3ea15f4745ce9df0732e987376b845af3c239f
             else:
                 response = {"status":"error", "error":"invalidMinLimit", "errorMessage":"El limite para empezar a borrar no puede ser menor a 1 GB"}
         else:
