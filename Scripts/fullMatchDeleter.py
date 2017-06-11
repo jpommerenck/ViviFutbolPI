@@ -1,6 +1,7 @@
 import os
 import shutil
 from dateUtil import get_yesterday_short_date_str, get_current_hour
+from dbUtil import log_error
 
 FOLDERS_PATH = '/home/pi/ViviFutbolLocal/Videos/'
 

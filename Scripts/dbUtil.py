@@ -1,4 +1,5 @@
 import sqlite3
+from dateUtil import get_current_date_in_server_format_str, rest_days_to_date, get_current_date_str, str_to_date_time
 
 path = "/home/pi/ViviFutbolLocal/BD/"
 bd_name = "vivifutbol.db"
@@ -48,6 +49,35 @@ def create_download_codes_table():
     cur.execute('CREATE TABLE download_codes (code TEXT PRIMARY KEY, times_used INTEGER)')
     conn.close()
 
+def create_used_codes_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE used_download_codes (code TEXT PRIMARY KEY, times_used INTEGER, downloads INTEGER, first_used TEXT, last_used TEXT, sent INTEGER)')
+    conn.close()
+    
+
+def create_user_code_use_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE user_code_uses (code TEXT, phone TEXT, date TEXT, sent INTEGER, PRIMARY KEY(code, phone))')
+    conn.close()
+    
+def create_maintenance_tokens_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE maintenance_tokens (token TEXT PRIMARY KEY)')
+    conn.close()
+
+def insert_maintenance_token(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT token FROM maintenance_tokens WHERE token = ?", (token,))
+    existingToken = cur.fetchone()
+    if existingToken is None:
+        cur.execute('INSERT INTO maintenance_tokens VALUES("'+token+'")')
+        conn.commit()
+    conn.close()
+
 def insert_download_code(code):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -55,6 +85,39 @@ def insert_download_code(code):
     existingCode = cur.fetchone()
     if existingCode is None:
         cur.execute('INSERT INTO download_codes VALUES("'+code+'", 0)')
+        conn.commit()
+    conn.close()
+
+def code_used(code, phone):
+    currentDate = get_current_date_in_server_format_str()
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM user_code_uses WHERE code = "'+code+'" AND phone = "'+phone+'"')
+    existingUse = cur.fetchone()
+    if existingUse is None:
+        cur.execute('INSERT INTO user_code_uses VALUES("'+code+'", "'+phone+'", "'+get_current_date_in_server_format_str()+'", 0)')
+        conn.commit()
+    cur.execute("SELECT * FROM used_download_codes WHERE code = ?", (code,))
+    existingCode = cur.fetchone()
+    if existingCode is None:
+        cur.execute('INSERT INTO used_download_codes VALUES("'+code+'", 1, 0, "'+currentDate+'", "'+currentDate+'", 0)')
+        conn.commit()
+    else:
+        timesUsed = existingCode[1]
+        timesUsed = timesUsed + 1
+        cur.execute('UPDATE used_download_codes SET times_used = '+str(timesUsed)+', last_used = "'+currentDate+'" WHERE code = ?', (code,))
+        conn.commit()
+    conn.close()
+
+def code_download(code):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM used_download_codes WHERE code = ?", (code,))
+    existingCode = cur.fetchone()
+    if existingCode is not None:
+        downloads = existingCode[2]
+        downloads = downloads + 1
+        cur.execute('UPDATE used_download_codes SET downloads = '+str(downloads)+' WHERE code = ?', (code,))
         conn.commit()
     conn.close()
 
@@ -70,6 +133,16 @@ def download_code_exists(code):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute("SELECT rowid FROM download_codes WHERE code=?",(code,)) 
+    data=cur.fetchone()
+    if data is None:
+        return False
+    else:
+        return True
+    
+def maintenance_token_exists(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT rowid FROM maintenance_tokens WHERE token=?",(token,)) 
     data=cur.fetchone()
     if data is None:
         return False
@@ -103,6 +176,41 @@ def get_all_marks_between_dates(start, finish):
     conn.close()
     return marks
 
+def get_used_codes():
+    codes = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM user_code_uses WHERE(sent = 0)'):
+        code = {
+            "code": row[0],
+            "phone": row[1],
+            "date":row[2]
+        }
+        codes.append(code)
+    conn.close()
+    return codes
+
+def get_used_codes_without_downloads():
+    codes = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM used_download_codes WHERE (downloads = 0 AND sent = 0)'):
+        code = {
+            "code": row[0],
+            "timesAccessed": row[1],
+            "firstUse":row[3],
+            "lastUse":row[4]
+        }
+        codes.append(code)
+    conn.close()
+    return codes
+
+def mark_codes_as_sent():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE used_download_codes SET sent = 1 WHERE (downloads = 0 AND sent = 0)')
+    cur.execute('UPDATE user_code_uses SET sent = 1')
+
 def get_all_marks_not_processed():
     marks = []
     conn = sqlite3.connect(path + bd_name)
@@ -119,7 +227,7 @@ def delete_all_marks():
     conn.commit()
     conn.close()
     
-
+#Ejemplo get_config_value('START_RECORDING_TIME')
 def get_config_value(variable):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -131,7 +239,65 @@ def create_all_tables():
     create_video_mark_table()
     create_configuration_table()
     create_download_codes_table()
+    create_maintenance_tokens_table()
+    create_used_codes_table()
+    create_user_code_use_table
 
+#id date user rol action
+def create_log_activity_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE log_activity (date_time DATETIME, type TEXT, user TEXT, rol TEXT, action TEXT, description TEXT)')
+    conn.close()
+
+
+def log_info(user, rol, action):
+    date = get_current_date_in_server_format_str()
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('INSERT INTO log_activity VALUES("' + date + '","INFO","' + user + '","' + rol + '","' + action + '","")')
+    conn.commit()
+    conn.close()
+
+
+def log_error(user, rol, action, message):
+    date = get_current_date_in_server_format_str()
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('INSERT INTO log_activity VALUES("' + date + '", "ERROR", "' + user + '", "' + rol + '", "' + action + '", "' + str(message) + '")')
+    conn.commit()
+    conn.close()
+
+
+def get_log_activity():
+    logs = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM log_activity'):
+        log = {
+            "date_time": row[0],
+            "type": row[1],
+            "user":row[2],
+            "rol":row[3],
+            "action":row[4],
+            "description":row[5]
+        }
+        logs.append(log)
+    conn.close()
+    return logs
+
+
+def delete_old_logs():
+    date = get_current_date_str()
+    last_date = rest_days_to_date(str_to_date_time(date), 30)
+    last_date = str(last_date).split(' ')[0]
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('DELETE FROM log_activity WHERE date_time <= DATETIME("' + last_date + '")')
+    conn.commit()
+    conn.close()
+
+    
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
     create_all_tables()

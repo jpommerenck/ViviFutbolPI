@@ -1,6 +1,7 @@
 import os
 from time import sleep
 import shutil
+from dbUtil import log_error
 
 #Constantes de la base de datos
 PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolLocal/Pictures/'
