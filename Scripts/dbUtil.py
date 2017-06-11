@@ -241,7 +241,7 @@ def create_all_tables():
     create_download_codes_table()
     create_maintenance_tokens_table()
     create_used_codes_table()
-    create_user_code_use_table
+    create_user_code_use_table()
 
 #id date user rol action
 def create_log_activity_table():
@@ -251,7 +251,7 @@ def create_log_activity_table():
     conn.close()
 
 
-def log_info(user, rol, action):
+def insert_log_info(user, rol, action):
     date = get_current_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -260,7 +260,7 @@ def log_info(user, rol, action):
     conn.close()
 
 
-def log_error(user, rol, action, message):
+def insert_log_error(user, rol, action, message):
     date = get_current_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -321,3 +321,10 @@ def create_environment_config():
     insert_configuration_value('INSTALLER_TOKEN','0000')
     insert_configuration_value('DISK_START_DELETE_SPACE','1024')
     insert_configuration_value('DISK_STOP_DELETE_SPACE','15360')
+    #11-07-2017
+    insert_configuration_value('HIGHLIGHT_NAME','Hightlight_')
+    insert_configuration_value('HIGHLIGHT_AUX_NAME','Hightlight_Aux_')
+    insert_configuration_value('COMPLETE_NAME','Complete_')
+    insert_configuration_value('AUDIOS_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Audios/')
+    insert_configuration_value('SECONDS_WAITING_FOR_ADD_NEW_MARK','5')
+    insert_configuration_value('VIDEO_TOTAL_TIME','3600')

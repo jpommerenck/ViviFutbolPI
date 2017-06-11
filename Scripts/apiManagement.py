@@ -2,15 +2,15 @@ from flask import Flask, request, jsonify, send_file
 from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
-from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, log_info, log_error, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent, get_log_activity
+from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent, get_config_value
+from logger import log_activity, log_info, log_error
 import time
 import json
 
 #Constantes de la base de datos
-API_MANAGEMENT_PORT = 5002
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/'
-
+API_MANAGEMENT_PORT = int(get_config_value("API_MANAGEMENT_PORT"))
+PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+PATH_PICTURES_LOCALIZATION = get_config_value("PICTURES_LOCALIZATION_PATH")
 
 app = Flask(__name__)
 auth = HTTPTokenAuth('Token')
@@ -267,7 +267,7 @@ def download_data():
         email = request.form.get("email")
         usedCodes = get_used_codes()
         usedCodesWithoutDownloads = get_used_codes_without_downloads()
-        logActivity = get_log_activity()
+        logActivity = log_activity()
         mark_codes_as_sent()
         response = {
             "status":"ok",

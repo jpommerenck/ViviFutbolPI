@@ -1,19 +1,18 @@
 from picamera import PiCamera
 from time import sleep
 from dateUtil import get_current_date_str, get_current_short_date_str, get_current_time_int
-#from dbUtil import log_error
+from logger import log_info, log_error
 import os
-
-#Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
-TIME_RECORDING_VIDEO=15
-START_RECORDING_TIME=400
-FINISH_RECORDING_TIME=2200
-
+from dbUtil import get_config_value
 
 def main():
     try:
+        PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+        PATH_AUDIO_LOCALIZATION = get_config_value("AUDIOS_LOCALIZATION_PATH")
+        TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
+        START_RECORDING_TIME = int(get_config_value("START_RECORDING_TIME"))
+        FINISH_RECORDING_TIME = int(get_config_value("FINISH_RECORDING_TIME"))
+        
         camera = PiCamera()
         camera.resolution = (640,480)
         camera.framerate = 30
@@ -49,13 +48,12 @@ def main():
             camera.close()
 
     except Exception as e:
-        #log_error("SYSTEM", 'SYSTEM', 'camera.py - main()', str(e))
-        return 'error'
+        log_error("SYSTEM", 'SYSTEM', 'camera.py - main()', str(e))
     finally:
         try:
             camera.close()
         except OSError:
-            #log_error("SYSTEM", 'SYSTEM', 'camera.py - main()', str(e))
+            log_error("SYSTEM", 'SYSTEM', 'camera.py - main()', str(e))
             pass
 
 

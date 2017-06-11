@@ -5,17 +5,17 @@ import re
 import time
 from dateUtil import get_current_short_date_str, add_seconds_to_date, get_current_date_str, str_to_date_time, check_for_insert_mark, get_date_str
 from fileUtil import get_wav_files_in_directory, newest_wav_in_directory
-from dbUtil import get_last_mark, insert_mark, log_error
-
-
-PATH_AUDIO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Audios/'
-SECONDS_WAITING_FOR_CONVERT_VIDEO=15
-SECONDS_WAITING_FOR_ADD_NEW_MARK=5
-MIN_AMPLITUD = 0.30
+from dbUtil import get_last_mark, insert_mark, get_config_value
+from logger import log_error
 
 
 def main(args=None):
     try:
+        PATH_AUDIO_LOCALIZATION = get_config_value("AUDIOS_LOCALIZATION_PATH")
+        SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
+        SECONDS_WAITING_FOR_ADD_NEW_MARK = int(get_config_value("SECONDS_WAITING_FOR_ADD_NEW_MARK"))
+        MIN_AMPLITUD = 0.30
+        
         var = 0
         last_newest_file = ''
         while var < 1000 :
@@ -62,8 +62,8 @@ def main(args=None):
             var = var + 1
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             os.remove(file_name)
-    except KeyboardInterrupt:
-        print('Entro a la exception')
+    except KeyboardInterrupt as e
+        log_error("SYSTEM", 'SYSTEM', 'highSoundDetector.py - main()', str(e))
     finally:
         print('Program over')
 

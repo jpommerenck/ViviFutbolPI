@@ -1,18 +1,18 @@
 from fileUtil import get_h264_files_in_directory, delete_file, newest_h264_in_directory
 from dateUtil import get_current_short_date_str
-#from dbUtil import log_error
+from logger import log_error
 import time
 import os
 
 
-# Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-SECONDS_WAITING_FOR_CONVERT_VIDEO=15
-
 def main():
-    last_newest_file = ''
     try:
+        PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+        SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
+
+        last_newest_file = ''
         var = 0
+
         while var < 2000 :
             video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
             video_path_mp4 = video_path + '/mp4/'
@@ -46,6 +46,8 @@ def main():
             var = var + 1
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             last_newest_file = newest_file
+    except Exception as e:
+        log_error("SYSTEM", 'SYSTEM', 'videoConverter.py - main()', str(e))            
     finally:
         #Que se hace por si falla el sistema
         var = 0

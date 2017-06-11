@@ -2,12 +2,13 @@ from flask import Flask, request
 from flask import send_file
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str
-from dbUtil import log_info, log_error
+from logger import log_info, log_error
+from dbUtil import get_config_value
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/'
-PATH_PICTURES_LOCALIZATION = '/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/'
-API_OWNER_PORT = 5001
+PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+PATH_PICTURES_LOCALIZATION = get_config_value("PICTURES_LOCALIZATION_PATH")
+API_OWNER_PORT = int(get_config_value("API_OWNER_PORT"))
 
 app = Flask(__name__)
 

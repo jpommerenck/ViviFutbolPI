@@ -1,15 +1,17 @@
 from flask import Flask, send_file, jsonify, request
 from fileUtil import get_mp4_files_in_directory, get_jpg_files_in_directory, get_file_name_without_extension
-from dbUtil import download_code_exists, code_used, code_download
+from dbUtil import download_code_exists, code_used, code_download, get_config_value
 import sqlite3
 import os
 import os.path
 from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
-from dbUtil import log_info, log_error
+from logger import log_info, log_error
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/' + get_current_short_date_str() + '/mp4/Highlights'
+PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
+HIGHLIGHT_NAME = get_config_value("HIGHLIGHT_NAME")
 
 app = Flask(__name__)
 
@@ -18,9 +20,9 @@ app = Flask(__name__)
 @app.route('/getImages', methods=['GET', 'POST'])
 def get_images():
     try:
-        directory = PATH_VIDEO_LOCALIZATION
+        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
         newDirectoryName = "tmp"
-        newDirectory = directory + "/" + newDirectoryName
+        newDirectory = directory + newDirectoryName
         phone = request.form.get("phone")
 
         if(not os.path.exists(newDirectory)):
@@ -55,8 +57,8 @@ def get_video(name):
         ## TODO hay que ver como recibimos el codigo aca tmb
         ##code_download(video_code)
         name = name.split('.')[0] + ".mp4"
-        directory = PATH_VIDEO_LOCALIZATION
-        filePath = directory + "/" + name
+        directory = directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
+        filePath = directory + name
         phone = request.form.get("phone")
         if os.path.isfile(filePath):
             log_info(phone, 'USER', 'apiUser.py - get_video()')

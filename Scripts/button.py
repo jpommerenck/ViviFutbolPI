@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from dbUtil import insertMark, log_error
+from logger import log_info, log_error
 from dateUtil import  getCurrentDateStr
 
 GPIO.setmode(GPIO.BCM)
