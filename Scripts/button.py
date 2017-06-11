@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from logger import log_info, log_error
-from dateUtil import  getCurrentDateStr
+from dateUtil import  get_current_date_str
 
 GPIO.setmode(GPIO.BCM)
 

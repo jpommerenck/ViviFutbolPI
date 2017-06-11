@@ -5,6 +5,7 @@ from logger import log_info, log_error
 import os
 from dbUtil import get_config_value
 
+
 def main():
     try:
         PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
@@ -12,8 +13,8 @@ def main():
         TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
         START_RECORDING_TIME = int(get_config_value("START_RECORDING_TIME"))
         FINISH_RECORDING_TIME = int(get_config_value("FINISH_RECORDING_TIME"))
-        
-        camera = PiCamera()
+
+        camera = PiCamera()        
         camera.resolution = (640,480)
         camera.framerate = 30
         

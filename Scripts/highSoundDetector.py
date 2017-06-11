@@ -62,7 +62,7 @@ def main(args=None):
             var = var + 1
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             os.remove(file_name)
-    except KeyboardInterrupt as e
+    except KeyboardInterrupt as e:
         log_error("SYSTEM", 'SYSTEM', 'highSoundDetector.py - main()', str(e))
     finally:
         print('Program over')
