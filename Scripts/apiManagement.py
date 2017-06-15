@@ -6,6 +6,7 @@ from dbUtil import modify_configuration_value, get_config_value, insert_download
 from logger import log_activity, log_info, log_error
 import time
 import json
+import base64
 
 #Constantes de la base de datos
 API_MANAGEMENT_PORT = int(get_config_value("API_MANAGEMENT_PORT"))
@@ -127,8 +128,9 @@ def get_image_monitor_device():
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         image_monitor_device(video_directory, picture_path)
         log_info(email, 'MANAGEMENT', 'apiManagement.py - get_image_monitor_device()')
-
-        return send_file(picture_path, mimetype='image/jpeg')
+        with open(picture_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+        return jsonify({"status":"ok", "base64Image":str(encoded_string)})
     except Exception as e:
         email = request.form.get("email")
         log_error(email, 'MANAGEMENT', 'apiManagement.py - get_image_monitor_device()', str(e))
