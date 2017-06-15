@@ -8,7 +8,7 @@ from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
 
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/' + get_current_short_date_str() + '/mp4/Highlights'
+PATH_VIDEO_LOCALIZATION = '/home/pi/ViviFutbolLocal/Videos/2017-06-11/mp4/Highlights'
 
 app = Flask(__name__)
 
@@ -28,10 +28,9 @@ def index():
 @app.route('/getImages', methods=['GET', 'POST'])
 def get_images():
     directory = PATH_VIDEO_LOCALIZATION
-    
     newDirectoryName = "tmp"
     newDirectory = directory + "/" + newDirectoryName
-    phone = request.form.get("phone")
+    #phone = request.form.get("phone")
     if(not os.path.exists(newDirectory)):
         os.makedirs(newDirectory)
         
@@ -42,11 +41,12 @@ def get_images():
         os.system("avconv -i "+video+" -vframes 1 -f image2 "+imageName);
 
     zipName = "thumbs.zip"
-    os.system("cd "+directory+"; zip "+zipName+" "+newDirectoryName+"/*")
+    if (not os.path.exists(directory+"/"+zipName)):
+        os.system("cd "+directory+"; zip "+zipName+" "+newDirectoryName+"/*")
     return send_file(directory+"/"+zipName, mimetype='application/zip')
 
 
-#172.24.1.1:5000/getImages/<name>
+#172.24.1.1:5000/getVideo/<name>
 @app.route('/getVideo/<name>', methods=['GET', 'POST'])
 def get_video(name):
     ## TODO hay que ver como recibimos el codigo aca tmb
@@ -54,7 +54,7 @@ def get_video(name):
     name = name.split('.')[0] + ".mp4"
     directory = PATH_VIDEO_LOCALIZATION
     filePath = directory + "/" + name
-    phone = request.form.get("phone")
+    #phone = request.form.get("phone")
     if os.path.isfile(filePath):
         return send_file(filePath, mimetype='video/mp4')
     else:
@@ -64,7 +64,7 @@ def get_video(name):
 #172.24.1.1:5000/validateCode/<code>
 @app.route('/validateCode/<code>', methods=['GET', 'POST'])
 def validate_code(code):
-    phone = request.form.get("phone")
+    ##phone = request.form.get("phone")
     if(len(code) > 4):            
         if code == "ABC123":
             ##TODO DEBUG - sacar

@@ -263,9 +263,6 @@ def log_error(user, rol, action):
     cur.execute('INSERT INTO configurations VALUES('+date+', "ERROR", '+user+', '+rol+', '+action+'")')
     conn.commit()
     conn.close()
-
-def delete_old_log():
-
     
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
