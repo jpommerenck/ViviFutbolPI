@@ -1,5 +1,5 @@
 import sqlite3
-from dateUtil import get_current_date_in_server_format_str
+from dateUtil import get_current_date_in_server_format_str, rest_days_to_date, get_current_date_str, str_to_date_time
 
 path = "/home/pi/ViviFutbolLocal/BD/"
 bd_name = "vivifutbol.db"
@@ -241,26 +241,58 @@ def create_all_tables():
     create_download_codes_table()
     create_maintenance_tokens_table()
     create_used_codes_table()
-    create_user_code_use_table
+    create_user_code_use_table()
 
 #id date user rol action
 def create_log_activity_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('CREATE TABLE log_activity (date_time DATETIME, type TEXT, user TEXT, rol TEXT, action TEXT)')
+    cur.execute('CREATE TABLE log_activity (date_time DATETIME, type TEXT, user TEXT, rol TEXT, action TEXT, description TEXT)')
     conn.close()
 
-def log_info(date, user, rol, action):
+
+def insert_log_info(user, rol, action):
+    date = get_current_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO configurations VALUES('+date+', "INFO", '+user+', '+rol+', '+action+'")')
+    cur.execute('INSERT INTO log_activity VALUES("' + date + '","INFO","' + user + '","' + rol + '","' + action + '","")')
     conn.commit()
     conn.close()
 
-def log_error(user, rol, action):
+
+def insert_log_error(user, rol, action, message):
+    date = get_current_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO configurations VALUES('+date+', "ERROR", '+user+', '+rol+', '+action+'")')
+    cur.execute('INSERT INTO log_activity VALUES("' + date + '", "ERROR", "' + user + '", "' + rol + '", "' + action + '", "' + str(message) + '")')
+    conn.commit()
+    conn.close()
+
+def get_log_activity():
+    logs = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM log_activity'):
+        log = {
+            "date_time": row[0],
+            "type": row[1],
+            "user":row[2],
+            "rol":row[3],
+            "action":row[4],
+            "description":row[5]
+        }
+        logs.append(log)
+    conn.close()
+    return logs
+
+
+def delete_old_logs():
+    date = get_current_date_str()
+    last_date = rest_days_to_date(str_to_date_time(date), 30)
+    last_date = str(last_date).split(' ')[0]
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('DELETE FROM log_activity WHERE date_time <= DATETIME("' + last_date + '")')
     conn.commit()
     conn.close()
     
@@ -287,3 +319,10 @@ def create_environment_config():
     insert_configuration_value('INSTALLER_TOKEN','0000')
     insert_configuration_value('DISK_START_DELETE_SPACE','1024')
     insert_configuration_value('DISK_STOP_DELETE_SPACE','15360')
+    #11-07-2017
+    insert_configuration_value('HIGHLIGHT_NAME','Hightlight_')
+    insert_configuration_value('HIGHLIGHT_AUX_NAME','Hightlight_Aux_')
+    insert_configuration_value('COMPLETE_NAME','Complete_')
+    insert_configuration_value('AUDIOS_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Audios/')
+    insert_configuration_value('SECONDS_WAITING_FOR_ADD_NEW_MARK','5')
+    insert_configuration_value('VIDEO_TOTAL_TIME','3600')
