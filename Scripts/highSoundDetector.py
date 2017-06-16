@@ -15,10 +15,13 @@ def main(args=None):
         SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
         SECONDS_WAITING_FOR_ADD_NEW_MARK = int(get_config_value("SECONDS_WAITING_FOR_ADD_NEW_MARK"))
         MIN_AMPLITUD = 0.30
+        SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
         
-        var = 0
-        last_newest_file = ''
-        while var < 1000 :
+        current_time = get_current_time_int()
+        while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
+         
+            last_newest_file = ''
+            
             # Ubicación de los audios para generar las marcas
             audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str()
             # Obtengo todos los audios no procesados
@@ -36,7 +39,7 @@ def main(args=None):
                             file_aux = file_name
                             file_aux = file_aux.replace('.wav', "_" + str(i) + ".wav")
                             j = i+1
-                            
+                                
                             os.system('sox ' + file_name + " " + file_aux + " trim " + str(i) + " " + str(j))
                             proc = subprocess.Popen(['sh','sox.sh', file_aux, '5' ], stdout=subprocess.PIPE)
 
@@ -44,24 +47,24 @@ def main(args=None):
                             # Obtengo la amplitud para ese segundo
                             amplitude=float(result)
                             os.remove(file_aux)
-                            
+                                
                             if amplitude > MIN_AMPLITUD:
-
                                 audio_file = file_name.replace(audio_path + "/", '')
                                 audio_file = audio_file.replace('.wav', '')
                                 new_mark_for_insert = add_seconds_to_date(str_to_date_time(audio_file), i)
-                                
+                                    
                                 if get_last_mark()!='':
                                     last_mark = str_to_date_time(get_last_mark())
-                                
+                                    
                                     # Verifico si no se ingresó una marca anteriormente para esta jugada
                                     if check_for_insert_mark(new_mark_for_insert, last_mark, SECONDS_WAITING_FOR_ADD_NEW_MARK):
                                         insert_mark(get_date_str(new_mark_for_insert))
                                 else:
                                     insert_mark(get_date_str(new_mark_for_insert))
-            var = var + 1
+
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             os.remove(file_name)
+            current_time = get_current_time_int()
     except KeyboardInterrupt as e:
         log_error("SYSTEM", 'SYSTEM', 'highSoundDetector.py - main()', str(e))
     finally:

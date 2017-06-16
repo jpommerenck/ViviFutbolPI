@@ -8,10 +8,17 @@ from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
 
+PATH_VIDEO_LOCALIZATION = ''
+MP4_VIDEOS_PATH = ''
+HIGHLIGHT_NAME = ''
+
+
 #Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
-MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
-HIGHLIGHT_NAME = get_config_value("HIGHLIGHT_NAME")
+def update_variables():
+    PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+    MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
+    HIGHLIGHT_NAME = get_config_value("HIGHLIGHT_NAME")
+
 
 app = Flask(__name__)
 
@@ -128,4 +135,5 @@ def validate_code(code):
     
 
 if __name__ == '__main__':
+    update_variables()
     app.run(debug=True, host='172.24.1.1')

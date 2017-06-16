@@ -8,10 +8,15 @@ import time
 import json
 import base64
 
+API_MANAGEMENT_PORT = 0
+PATH_VIDEO_LOCALIZATION = ''
+PATH_PICTURES_LOCALIZATION = ''
+
 #Constantes de la base de datos
-API_MANAGEMENT_PORT = int(get_config_value("API_MANAGEMENT_PORT"))
-PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
-PATH_PICTURES_LOCALIZATION = get_config_value("PICTURES_LOCALIZATION_PATH")
+def update_variables():
+    API_MANAGEMENT_PORT = int(get_config_value("API_MANAGEMENT_PORT"))
+    PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+    PATH_PICTURES_LOCALIZATION = get_config_value("PICTURES_LOCALIZATION_PATH")
 
 app = Flask(__name__)
 auth = HTTPTokenAuth('Token')
@@ -123,6 +128,7 @@ def get_recording_times():
 @auth.login_required
 def get_image_monitor_device():
     try:
+        update_variables()
         email = request.form.get("email")
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
@@ -306,4 +312,5 @@ def auth_error():
 
 
 if __name__ == '__main__':
+    update_variables()
     app.run(debug=True, host='172.24.1.1', port=API_MANAGEMENT_PORT)

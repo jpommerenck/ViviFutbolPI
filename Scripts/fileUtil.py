@@ -6,13 +6,19 @@ from picamera import PiCamera
 from logger import log_error
 from dbUtil import get_config_value
 
+PATH_VIDEO_LOCALIZATION = ''
+PATH_CONCAT_VIDEOS = ''
+TIME_RECORDING_VIDEO = 0
+
 # Constantes de la base de datos
-PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
-PATH_CONCAT_VIDEOS = get_config_value("CONCAT_VIDEOS_PATH")
-TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
+def update_variables():
+    PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
+    PATH_CONCAT_VIDEOS = get_config_value("CONCAT_VIDEOS_PATH")
+    TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
 
 def get_concat_file_name(file_name):
     try:
+        update_variables()
         file_name_split = file_name.split('/')
         file_only_name = file_name_split[len(file_name_split)-1]
         file_without_extension = file_only_name.split('.')[0]
@@ -181,6 +187,7 @@ def get_time_last_frame(newest_h264_file, picture_path):
 #Obtiene el siguiente video filmado de otro video
 def get_next_video(video_path):
     try:
+        update_variables()
         video_str_date = convert_path_to_str_date(video_path)
         video_date = str_to_date_time(video_str_date)
         video_str_date = video_str_date.split('_')[0]
@@ -204,6 +211,7 @@ def get_next_video(video_path):
 #Retorna si una marca fue creada durante ese video
 def video_contains_mark(video_date, mark):
     try:
+        update_variables()
         finish_time = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
         mark_date = str_to_date_time(mark)
         if (video_date < mark_date and finish_time > mark_date):
@@ -217,6 +225,7 @@ def video_contains_mark(video_date, mark):
 #Obtiene el video anterior de otro video filmado
 def get_previous_video(video_path):
     try:
+        update_variables()
         video_str_date = convert_path_to_str_date(video_path)
         video_date = str_to_date_time(video_str_date)
         video_str_date = video_str_date.split('_')[0]

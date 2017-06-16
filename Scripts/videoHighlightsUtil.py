@@ -1,9 +1,10 @@
 import time
 import os
 from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video
-from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds
+from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds, get_current_time_int
 from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed, get_config_value
 from logger import log_error
+
 
 def main():
     try:
@@ -16,9 +17,10 @@ def main():
         HIGHLIGHT_AUX_NAME = get_config_value("HIGHLIGHT_AUX_NAME")
         COMPLETE_NAME = get_config_value("COMPLETE_NAME")
         MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
-        var = 1
-        
-        while var<10000:
+        SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
+
+        current_time = get_current_time_int()
+        while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
             i=0
             file_array_highlight=[]
             find_video = False
@@ -27,13 +29,12 @@ def main():
             video_path = ''
             total_record = TIME_AFTER + TIME_BEFORE
             marks = get_all_marks_not_processed()
-            
+                
             for row in marks:
-
                 mark_date = row.split('_')[0]
                 j = 0
                 row_date = str_to_date_time(row)
-                
+                    
                 if mark_date != last_mark_date:
                     find_video = False
                     i=0
@@ -46,7 +47,7 @@ def main():
                     if not os.path.exists(new_video_path):
                         # En caso de no existir el directorio lo creo
                         os.makedirs(new_video_path)
-                
+                    
                 for video in file_array:
                     video_str_date = convert_path_to_str_date(video)
                     video_date = str_to_date_time(video_str_date)
@@ -64,18 +65,18 @@ def main():
 
                         higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_NAME + row + '.mp4'
                         aux_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_AUX_NAME + row + '.mp4'
-                        
+                            
                         # Cuando no preciso concatenar videos
                         if video_date <= start_highlight and video_finish >= finish_highlight:
                             seconds_start_cut = difference - TIME_BEFORE
                             os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)
-                            
+                                
                         elif video_date <= start_highlight:
                             # Obtengo el video siguiente para concatenar para concatenar
                             next_video = get_next_video(video)
                             next_video_str_date = convert_path_to_str_date(next_video)
                             seconds_start_cut = difference - TIME_BEFORE
-                            
+                                
                             # Consulto si se encontro el siguiente video, si no encontro es que es el ultimo video
                             if (next_video_str_date != ''):
                                 next_video_date = str_to_date_time(next_video_str_date)
@@ -83,7 +84,7 @@ def main():
                                 os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)                    
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
                                 os.remove(aux_video_path)
-                                
+                                    
                             else:
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
                         else:
@@ -91,7 +92,7 @@ def main():
                             previous_video = get_previous_video(video)
                             previous_video_str_date = convert_path_to_str_date(previous_video)
                             seconds_start_cut = difference - TIME_BEFORE
-                            
+                                
                             # Consulto si se encontro el siguiente video, si no encontro es que es el ultimo video
                             if (previous_video_str_date != ''):
                                 previous_video_date = str_to_date_time(previous_video_str_date)
@@ -104,7 +105,8 @@ def main():
                                 os.remove(aux_video_path)
                             else:
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
-            var = var + 1
+
+            current_time = get_current_time_int()
             
     except Exception as e:
         log_error("SYSTEM", 'SYSTEM', 'videoHighlights.py - main()', str(e))
