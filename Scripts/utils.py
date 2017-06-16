@@ -1,4 +1,3 @@
-
 def decode_time(encryptedHour):
     hours_char = encryptedHour[0:1]
     minute_tens = encryptedHour[1:2]

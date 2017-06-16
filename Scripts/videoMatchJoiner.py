@@ -70,5 +70,6 @@ def join_match_video(TIME_START):
                 os.system('MP4Box -splitx ' + str(start_complete_video) + ':' + str(finish_complete_video) + ' "' + aux_video_path + '" -out "' + new_video_path + '"')
                 os.remove(aux_video_path)
                 break
+            
     except Exception as e:
         log_error("SYSTEM", 'SYSTEM', 'videoMatchJoiner.py - main()', str(e))

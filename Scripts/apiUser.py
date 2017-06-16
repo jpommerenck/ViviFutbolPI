@@ -15,6 +15,9 @@ HIGHLIGHT_NAME = ''
 
 #Constantes de la base de datos
 def update_variables():
+    global PATH_VIDEO_LOCALIZATION
+    global MP4_VIDEOS_PATH
+    global HIGHLIGHT_NAME 
     PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
     MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
     HIGHLIGHT_NAME = get_config_value("HIGHLIGHT_NAME")

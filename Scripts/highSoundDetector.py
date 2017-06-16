@@ -3,7 +3,7 @@ import subprocess
 import sys
 import re
 import time
-from dateUtil import get_current_short_date_str, add_seconds_to_date, get_current_date_str, str_to_date_time, check_for_insert_mark, get_date_str
+from dateUtil import get_current_short_date_str, add_seconds_to_date, get_current_date_str, str_to_date_time, check_for_insert_mark, get_date_str, get_current_time_int
 from fileUtil import get_wav_files_in_directory, newest_wav_in_directory
 from dbUtil import get_last_mark, insert_mark, get_config_value
 from logger import log_error
@@ -16,10 +16,20 @@ def main(args=None):
         SECONDS_WAITING_FOR_ADD_NEW_MARK = int(get_config_value("SECONDS_WAITING_FOR_ADD_NEW_MARK"))
         MIN_AMPLITUD = 0.30
         SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
+
+        START_RECORDING_TIME = get_config_value("START_RECORDING_TIME")
+        FINISH_RECORDING_TIME = get_config_value("FINISH_RECORDING_TIME")
+
+        START_RECORDING_TIME = START_RECORDING_TIME.replace(":","")
+        START_RECORDING_TIME = int(START_RECORDING_TIME.replace(":",""))
+
+        FINISH_RECORDING_TIME = FINISH_RECORDING_TIME.replace(":","")
+        FINISH_RECORDING_TIME = int(FINISH_RECORDING_TIME.replace(":",""))
         
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
-         
+
+            print('entro al while')
             last_newest_file = ''
             
             # Ubicación de los audios para generar las marcas
@@ -45,6 +55,7 @@ def main(args=None):
 
                             result,errors = proc.communicate()
                             # Obtengo la amplitud para ese segundo
+                            print(str(float(result)))
                             amplitude=float(result)
                             os.remove(file_aux)
                                 
@@ -61,7 +72,7 @@ def main(args=None):
                                         insert_mark(get_date_str(new_mark_for_insert))
                                 else:
                                     insert_mark(get_date_str(new_mark_for_insert))
-
+            print('que va a eliminar ' + file_name)
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             os.remove(file_name)
             current_time = get_current_time_int()

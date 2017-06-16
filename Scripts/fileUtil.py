@@ -12,6 +12,9 @@ TIME_RECORDING_VIDEO = 0
 
 # Constantes de la base de datos
 def update_variables():
+    global PATH_VIDEO_LOCALIZATION
+    global PATH_CONCAT_VIDEOS
+    global TIME_RECORDING_VIDEO
     PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
     PATH_CONCAT_VIDEOS = get_config_value("CONCAT_VIDEOS_PATH")
     TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))

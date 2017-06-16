@@ -19,6 +19,15 @@ def main():
         MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
         SECONDS_WAITING_FOR_CONVERT_VIDEO = int(get_config_value("SECONDS_WAITING_FOR_CONVERT_VIDEO"))
 
+        START_RECORDING_TIME = get_config_value("START_RECORDING_TIME")
+        FINISH_RECORDING_TIME = get_config_value("FINISH_RECORDING_TIME")
+
+        START_RECORDING_TIME = START_RECORDING_TIME.replace(":","")
+        START_RECORDING_TIME = int(START_RECORDING_TIME.replace(":",""))
+
+        FINISH_RECORDING_TIME = FINISH_RECORDING_TIME.replace(":","")
+        FINISH_RECORDING_TIME = int(FINISH_RECORDING_TIME.replace(":",""))
+        
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
             i=0

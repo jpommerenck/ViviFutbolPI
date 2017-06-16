@@ -11,13 +11,19 @@ def main():
         PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
         PATH_AUDIO_LOCALIZATION = get_config_value("AUDIOS_LOCALIZATION_PATH")
         TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
-        START_RECORDING_TIME = int(get_config_value("START_RECORDING_TIME"))
-        FINISH_RECORDING_TIME = int(get_config_value("FINISH_RECORDING_TIME"))
+        START_RECORDING_TIME = get_config_value("START_RECORDING_TIME")
+        FINISH_RECORDING_TIME = get_config_value("FINISH_RECORDING_TIME")
+
+        START_RECORDING_TIME = START_RECORDING_TIME.replace(":","")
+        START_RECORDING_TIME = int(START_RECORDING_TIME.replace(":",""))
+
+        FINISH_RECORDING_TIME = FINISH_RECORDING_TIME.replace(":","")
+        FINISH_RECORDING_TIME = int(FINISH_RECORDING_TIME.replace(":",""))
 
         camera = PiCamera()        
         camera.resolution = (640,480)
         camera.framerate = 30
-        
+
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
                 
@@ -49,7 +55,8 @@ def main():
         log_error("SYSTEM", 'SYSTEM', 'camera.py - main()', str(e))
     finally:
         try:
-            camera.close()
+            print('Aca se debe cerrar la camara')
+            #camera.close()
         except OSError:
             log_error("SYSTEM", 'SYSTEM', 'camera.py - main()', str(e))
             pass

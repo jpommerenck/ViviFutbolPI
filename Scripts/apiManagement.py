@@ -14,6 +14,9 @@ PATH_PICTURES_LOCALIZATION = ''
 
 #Constantes de la base de datos
 def update_variables():
+    global API_MANAGEMENT_PORT
+    global PATH_VIDEO_LOCALIZATION
+    global PATH_PICTURES_LOCALIZATION
     API_MANAGEMENT_PORT = int(get_config_value("API_MANAGEMENT_PORT"))
     PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
     PATH_PICTURES_LOCALIZATION = get_config_value("PICTURES_LOCALIZATION_PATH")
