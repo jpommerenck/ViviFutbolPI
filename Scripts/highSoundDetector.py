@@ -28,8 +28,6 @@ def main(args=None):
         
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
-
-            print('entro al while')
             last_newest_file = ''
             
             # Ubicación de los audios para generar las marcas
@@ -55,24 +53,23 @@ def main(args=None):
 
                             result,errors = proc.communicate()
                             # Obtengo la amplitud para ese segundo
-                            print(str(float(result)))
-                            amplitude=float(result)
-                            os.remove(file_aux)
-                                
-                            if amplitude > MIN_AMPLITUD:
-                                audio_file = file_name.replace(audio_path + "/", '')
-                                audio_file = audio_file.replace('.wav', '')
-                                new_mark_for_insert = add_seconds_to_date(str_to_date_time(audio_file), i)
+                            if (result != ''):
+                                amplitude=float(result)
+                                os.remove(file_aux)
                                     
-                                if get_last_mark()!='':
-                                    last_mark = str_to_date_time(get_last_mark())
-                                    
-                                    # Verifico si no se ingresó una marca anteriormente para esta jugada
-                                    if check_for_insert_mark(new_mark_for_insert, last_mark, SECONDS_WAITING_FOR_ADD_NEW_MARK):
+                                if amplitude > MIN_AMPLITUD:
+                                    audio_file = file_name.replace(audio_path + "/", '')
+                                    audio_file = audio_file.replace('.wav', '')
+                                    new_mark_for_insert = add_seconds_to_date(str_to_date_time(audio_file), i)
+                                        
+                                    if get_last_mark()!='':
+                                        
+                                        last_mark = str_to_date_time(get_last_mark())
+                                        # Verifico si no se ingresó una marca anteriormente para esta jugada
+                                        if check_for_insert_mark(new_mark_for_insert, last_mark, SECONDS_WAITING_FOR_ADD_NEW_MARK):
+                                            insert_mark(get_date_str(new_mark_for_insert))
+                                    else:
                                         insert_mark(get_date_str(new_mark_for_insert))
-                                else:
-                                    insert_mark(get_date_str(new_mark_for_insert))
-            print('que va a eliminar ' + file_name)
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             os.remove(file_name)
             current_time = get_current_time_int()

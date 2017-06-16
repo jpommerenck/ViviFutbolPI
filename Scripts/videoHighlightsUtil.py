@@ -119,3 +119,6 @@ def main():
             
     except Exception as e:
         log_error("SYSTEM", 'SYSTEM', 'videoHighlights.py - main()', str(e))
+
+if __name__ == '__main__':
+    main()
