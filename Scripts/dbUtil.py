@@ -1,5 +1,5 @@
 import sqlite3
-from dateUtil import get_current_date_in_server_format_str, rest_days_to_date, get_current_date_str, str_to_date_time
+from dateUtil import get_current_date_in_server_format_str, get_last_week_date_in_server_format_str, rest_days_to_date, get_current_date_str, str_to_date_time
 
 path = "/home/pi/ViviFutbolLocal/BD/"
 bd_name = "vivifutbol.db"
@@ -247,7 +247,7 @@ def create_all_tables():
 def create_log_activity_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('CREATE TABLE log_activity (date_time DATETIME, type TEXT, user TEXT, rol TEXT, action TEXT, description TEXT)')
+    cur.execute('CREATE TABLE log_activity (date_time TEXT, type TEXT, user TEXT, rol TEXT, action TEXT, description TEXT)')
     conn.close()
 
 
@@ -285,6 +285,23 @@ def get_log_activity():
     conn.close()
     return logs
 
+def get_latest_log_activity():
+    logs = []
+    start_date = get_last_week_date_in_server_format_str()
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM log_activity WHERE date_time >= "'+start_date+'"'):
+        log = {
+            "date_time": row[0],
+            "type": row[1],
+            "user":row[2],
+            "rol":row[3],
+            "action":row[4],
+            "description":row[5]
+        }
+        logs.append(log)
+    conn.close()
+    return logs
 
 def delete_old_logs():
     date = get_current_date_str()
@@ -292,7 +309,7 @@ def delete_old_logs():
     last_date = str(last_date).split(' ')[0]
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('DELETE FROM log_activity WHERE date_time <= DATETIME("' + last_date + '")')
+    cur.execute('DELETE FROM log_activity WHERE date_time <= "' + last_date + '"')
     conn.commit()
     conn.close()
     
