@@ -8,13 +8,19 @@ def get_current_date_str():
     except Exception as e:
         log_error("SYSTEM", 'SYSTEM', 'dateUtil.py - get_current_date_str()', str(e))
 
-
 def get_current_date_in_server_format_str():
     try:
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     except Exception as e:
         log_error("SYSTEM", 'SYSTEM', 'dateUtil.py - get_current_date_in_server_format_str()', str(e))
 
+def get_last_week_date_in_server_format_str():
+    try:
+        date = datetime.now()
+        last_week = date - timedelta(days=7)
+        return last_week.strftime('%Y-%m-%d %H:%M:%S')
+    except Exception as e:
+        log_error("SYSTEM", 'SYSTEM', 'dateUtil.py - get_last_week_date_in_server_format_str()', str(e))
 
 def get_date_str(date_to_convert):
     try:

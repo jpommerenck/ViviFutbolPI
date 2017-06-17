@@ -1,4 +1,4 @@
-from dbUtil import insert_log_info, insert_log_error, get_log_activity
+from dbUtil import insert_log_info, insert_log_error, get_log_activity, get_latest_log_activity
 
 def log_info(user, rol, action):
     insert_log_info(str(user), rol, action)
@@ -8,3 +8,7 @@ def log_error(user, rol, action, message):
 
 def log_activity():
     return get_log_activity()
+
+def latest_log_activity():
+    return get_latest_log_activity()
+    

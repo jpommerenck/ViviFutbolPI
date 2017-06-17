@@ -3,7 +3,7 @@ from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
 from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent, get_config_value
-from logger import log_activity, log_info, log_error
+from logger import latest_log_activity, log_info, log_error
 import time
 import json
 import base64
@@ -282,7 +282,7 @@ def download_data():
         
         usedCodes = get_used_codes()
         usedCodesWithoutDownloads = get_used_codes_without_downloads()
-        logActivity = log_activity()
+        logActivity = latest_log_activity()
         mark_codes_as_sent()
         response = {
             "status":"ok",
