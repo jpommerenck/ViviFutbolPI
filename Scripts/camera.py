@@ -2,9 +2,9 @@ from picamera import PiCamera
 from time import sleep
 from dateUtil import get_current_date_str, get_current_short_date_str, get_current_time_int
 from logger import log_info, log_error
-import os
 from dbUtil import get_config_value
-
+import os
+import shutil
 
 def main():
     try:
@@ -30,6 +30,7 @@ def main():
             # Obtengo el path de donde se va a crear el video        
             video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + '/'
             audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str() + '/'
+            audio_aux_path = audio_path + 'Aux/'
 
             if not os.path.exists(video_path):
                 # En caso de no existir el directorio lo creo
@@ -39,8 +40,16 @@ def main():
                 # En caso de no existir el directorio lo creo
                 os.makedirs(audio_path)
 
+            if not os.path.exists(audio_aux_path):
+                # En caso de no existir el directorio lo creo
+                os.makedirs(audio_aux_path)
+
             camera.start_recording(video_path + get_current_date_str() + '.h264', format='h264', quality=23, intra_period=10)
-            os.system('arecord -D plughw:1 --duration=' + str(TIME_RECORDING_VIDEO) + ' -f cd -vv ' + audio_path + get_current_date_str() + '.wav')
+            audio_file_name = audio_path + get_current_date_str() + '.wav'
+            os.system('arecord -D plughw:1 --duration=' + str(TIME_RECORDING_VIDEO) + ' -f cd -vv ' + audio_file_name)
+            # Copio el audio para luego analizar los niveles de sonidos
+            shutil.copy2(audio_file_name, audio_aux_path)
+
                 
             if os.path.exists(audio_path):
                 camera.stop_recording()

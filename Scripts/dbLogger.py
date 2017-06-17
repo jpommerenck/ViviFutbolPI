@@ -46,9 +46,8 @@ def get_log_activity():
     return logs
 
 
-def get_latest_log_activity():
+def get_latest_log_activity(start_date):
     logs = []
-    start_date = get_last_week_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     for row in cur.execute('SELECT * FROM log_activity WHERE date_time >= "'+start_date+'"'):

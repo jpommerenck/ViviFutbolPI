@@ -31,7 +31,7 @@ def main(args=None):
             last_newest_file = ''
             
             # Ubicación de los audios para generar las marcas
-            audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str()
+            audio_path = PATH_AUDIO_LOCALIZATION + get_current_short_date_str() + "/Aux"
             # Obtengo todos los audios no procesados
             file_array = get_wav_files_in_directory(audio_path)
             newest_file = newest_wav_in_directory(audio_path + '/')
@@ -58,6 +58,7 @@ def main(args=None):
                                 os.remove(file_aux)
                                     
                                 if amplitude > MIN_AMPLITUD:
+                                    print('obtuve una buena amplitud')
                                     audio_file = file_name.replace(audio_path + "/", '')
                                     audio_file = audio_file.replace('.wav', '')
                                     new_mark_for_insert = add_seconds_to_date(str_to_date_time(audio_file), i)
@@ -70,8 +71,11 @@ def main(args=None):
                                             insert_mark(get_date_str(new_mark_for_insert))
                                     else:
                                         insert_mark(get_date_str(new_mark_for_insert))
+
+                    os.remove(file_name)
+                    file_array = get_wav_files_in_directory(audio_path)
+                    
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
-            os.remove(file_name)
             current_time = get_current_time_int()
     except KeyboardInterrupt as e:
         log_error("SYSTEM", 'SYSTEM', 'highSoundDetector.py - main()', str(e))

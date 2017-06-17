@@ -51,6 +51,7 @@ def main():
                         #Elimino los archivos temporales
                         delete_file(file_name)
                         delete_file(aux_file_name)
+                        delete_file(audio_file_name)
 
             time.sleep(SECONDS_WAITING_FOR_CONVERT_VIDEO)
             last_newest_file = newest_file
