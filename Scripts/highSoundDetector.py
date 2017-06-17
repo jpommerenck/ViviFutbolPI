@@ -19,13 +19,13 @@ def main(args=None):
 
         START_RECORDING_TIME = get_config_value("START_RECORDING_TIME")
         FINISH_RECORDING_TIME = get_config_value("FINISH_RECORDING_TIME")
-
+        
         START_RECORDING_TIME = START_RECORDING_TIME.replace(":","")
         START_RECORDING_TIME = int(START_RECORDING_TIME.replace(":",""))
 
         FINISH_RECORDING_TIME = FINISH_RECORDING_TIME.replace(":","")
         FINISH_RECORDING_TIME = int(FINISH_RECORDING_TIME.replace(":",""))
-        
+
         current_time = get_current_time_int()
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
             last_newest_file = ''
@@ -47,7 +47,7 @@ def main(args=None):
                             file_aux = file_name
                             file_aux = file_aux.replace('.wav', "_" + str(i) + ".wav")
                             j = i+1
-                                
+ 
                             os.system('sox ' + file_name + " " + file_aux + " trim " + str(i) + " " + str(j))
                             proc = subprocess.Popen(['sh','sox.sh', file_aux, '5' ], stdout=subprocess.PIPE)
 

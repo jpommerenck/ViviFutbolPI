@@ -242,6 +242,7 @@ def create_all_tables():
     create_maintenance_tokens_table()
     create_used_codes_table()
     create_user_code_use_table()
+    create_configurations_aux_table()
 
 #id date user rol action
 def create_log_activity_table():
@@ -295,6 +296,38 @@ def delete_old_logs():
     cur.execute('DELETE FROM log_activity WHERE date_time <= DATETIME("' + last_date + '")')
     conn.commit()
     conn.close()
+
+
+def create_configurations_aux_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE configurations_aux (variable TEXT, value TEXT)')
+    conn.close()
+    
+
+def insert_configurations_aux_value(variable, value):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('INSERT INTO configurations_aux VALUES("'+variable+'", "'+value+'")')
+    conn.commit()
+    conn.close()
+
+
+def modify_configurations_aux_value(variable, value):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE configurations_aux SET value = "'+value+'" WHERE variable = "'+variable+'"')
+    conn.commit()
+    conn.close()
+    
+
+def get_config_aux_value(variable):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    value = cur.execute('SELECT * FROM configurations_aux WHERE(variable = "' + variable + '")').fetchone()
+    conn.close()
+    return value[1]
+
     
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():

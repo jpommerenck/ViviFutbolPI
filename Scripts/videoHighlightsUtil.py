@@ -52,10 +52,10 @@ def main():
                     video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH
                     file_array = get_mp4_files_in_directory(video_path)
                     new_video_path = video_path + FOLDER_HIGLIGHTS
-
                     if not os.path.exists(new_video_path):
                         # En caso de no existir el directorio lo creo
-                        os.makedirs(new_video_path)
+                        #os.makedirs(new_video_path)
+                        print('lalalal')
                     
                 for video in file_array:
                     video_str_date = convert_path_to_str_date(video)
@@ -78,7 +78,7 @@ def main():
                         # Cuando no preciso concatenar videos
                         if video_date <= start_highlight and video_finish >= finish_highlight:
                             seconds_start_cut = difference - TIME_BEFORE
-                            os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)
+                            #os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)
                                 
                         elif video_date <= start_highlight:
                             # Obtengo el video siguiente para concatenar para concatenar
@@ -90,12 +90,13 @@ def main():
                             if (next_video_str_date != ''):
                                 next_video_date = str_to_date_time(next_video_str_date)
 
-                                os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)                    
-                                os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
-                                os.remove(aux_video_path)
+                                #os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)
+                                #os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
+                                #os.remove(aux_video_path)
                                     
                             else:
-                                os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
+                                print('lalala')
+                                #os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
                         else:
                             # Obtengo el video anterior para concatenar
                             previous_video = get_previous_video(video)
@@ -109,11 +110,14 @@ def main():
                                 seconds_start_cut = difference - TIME_BEFORE
                                 seconds_start_cut = TIME_RECORDING_VIDEO - seconds_start_cut
 
-                                os.system("MP4Box -cat "  + previous_video + ' -cat ' + video +  " " + aux_video_path)
-                                os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
-                                os.remove(aux_video_path)
+                                #os.system("MP4Box -cat "  + previous_video + ' -cat ' + video +  " " + aux_video_path)
+                                #s.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
+                                #os.remove(aux_video_path)
                             else:
-                                os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
+                                print('video ' + video)
+                                print('higlight_video_path ' + higlight_video_path)
+                                print("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)
+                                #os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
 
             current_time = get_current_time_int()
             

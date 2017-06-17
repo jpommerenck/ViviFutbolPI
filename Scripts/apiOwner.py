@@ -26,13 +26,13 @@ app = Flask(__name__)
 @app.route('/getImageMonitorDevice', methods=['GET', 'POST'])
 def get_image_monitor_device():
     try:
-        update_variables()
         email = request.form.get("email")
+        log_info(email, 'OWNER', 'apiOwner.py - get_image_monitor_device()')
+        
+        update_variables()
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         image_monitor_device(video_directory, picture_path)
-        log_info(email, 'OWNER', 'apiOwner.py - get_image_monitor_device()')
-
         return send_file(picture_path, mimetype='image/jpeg')
     except Exception as e:
         email = request.form.get("email")

@@ -30,10 +30,13 @@ app = Flask(__name__)
 @app.route('/getImages', methods=['GET', 'POST'])
 def get_images():
     try:
+        phone = request.form.get("phone")
+        log_info(phone, 'USER', 'apiUser.py - get_images()')
+
+        update_variables()
         directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
         newDirectoryName = "tmp"
         newDirectory = directory + newDirectoryName
-        phone = request.form.get("phone")
 
         if(not os.path.exists(newDirectory)):
             os.makedirs(newDirectory)
@@ -46,8 +49,7 @@ def get_images():
 
         zipName = "thumbs.zip"
         os.system("cd "+directory+"; zip "+zipName+" "+newDirectoryName+"/*")
-        log_info(phone, 'USER', 'apiUser.py - get_images()')
-
+        
         return send_file(directory+"/"+zipName, mimetype='application/zip')
     except Exception as e:
         phone = request.form.get("phone")
@@ -64,17 +66,19 @@ def get_images():
 @app.route('/getVideo/<name>', methods=['GET', 'POST'])
 def get_video(name):
     try:
+        phone = request.form.get("phone")
+        log_info(phone, 'USER', 'apiUser.py - get_images()')
+
+        update_variables()
         ## TODO hay que ver como recibimos el codigo aca tmb
         ##code_download(video_code)
         name = name.split('.')[0] + ".mp4"
         directory = directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
         filePath = directory + name
-        phone = request.form.get("phone")
+        
         if os.path.isfile(filePath):
-            log_info(phone, 'USER', 'apiUser.py - get_video()')
             return send_file(filePath, mimetype='video/mp4')
         else:
-            log_error(phone, 'USER', 'apiUser.py - get_video()', 'No se encontro el video ' + name)
             return ('',204)
     except Exception as e:
         phone = request.form.get("phone")
@@ -92,10 +96,13 @@ def get_video(name):
 def validate_code(code):
     try:
         phone = request.form.get("phone")
+        log_info(phone, 'USER', 'apiUser.py - get_images()')
+
+        update_variables()
+        
         if(len(code) > 4):            
             if code == "ABC123":
                 ##TODO DEBUG - sacar
-                log_info(phone, 'USER', 'apiUser.py - validate_code()')
                 return ('OK', 200)
             else:
                 ##el codigo es toda la string salvo las ultimas 3 letras
@@ -106,7 +113,6 @@ def validate_code(code):
                 if time is not None:
                     if(download_code_exists(video_code)):
                         ##code_used(video_code)
-                        log_info(phone, 'USER', 'apiUser.py - validate_code()')
                         return jsonify({
                             "status":"ok",
                             "time":time})
