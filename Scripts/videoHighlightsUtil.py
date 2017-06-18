@@ -70,7 +70,8 @@ def main():
                         # Diferencia en segundos entre el inicio del video y la marca
                         difference = rest_date_to_seconds(video_date, row_date)
 
-                        higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_NAME + row + '.mp4'
+                        #higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_NAME + row + '.mp4'
+                        higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + row + '.mp4'
                         aux_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_AUX_NAME + row + '.mp4'
                             
                         # Cuando no preciso concatenar videos

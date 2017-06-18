@@ -7,6 +7,7 @@ import os.path
 from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
+from videoMatchJoiner import join_match_video
 
 PATH_VIDEO_LOCALIZATION = ''
 MP4_VIDEOS_PATH = ''
@@ -116,9 +117,17 @@ def validate_code(code):
                 if time is not None:
                     if(download_code_exists(video_code)):
                         ##code_used(video_code)
+
+                        # Format match_start_time : 'yyy-mm-dd_hh-mm-ss'
+                        time_match = str(time).replace(':','-')
+                        match_start_time = get_current_short_date_str() + '_' + time_match + '-00'
+                        # Genero el video del partido completo
+                        join_match_video(match_start_time)
+
                         return jsonify({
                             "status":"ok",
-                            "time":time})
+                            "time":time,
+                            "date":match_start_time})
                     else:
                         log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo ' + code +  ' es incorrecto')
                         return jsonify({
