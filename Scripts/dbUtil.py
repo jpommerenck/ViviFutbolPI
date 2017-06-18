@@ -37,6 +37,13 @@ def get_last_mark():
     else:
         return value[0]
 
+def update_mark(markdate):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE video_marks SET is_processed = 0 WHERE markdate = "'+markdate+'"')
+    conn.commit()
+    conn.close()
+
 def create_configuration_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -87,6 +94,12 @@ def insert_download_code(code):
         cur.execute('INSERT INTO download_codes VALUES("'+code+'", 0)')
         conn.commit()
     conn.close()
+
+#insert_mark('2017-06-18_12-54-08')
+#insert_mark('2017-06-18_12-54-25')
+#insert_mark('2017-06-18_12-54-31')
+#insert_mark('2017-06-18_12-54-37')
+#insert_mark('2017-06-18_12-54-51')
 
 def code_used(code, phone):
     currentDate = get_current_date_in_server_format_str()

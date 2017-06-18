@@ -2,7 +2,7 @@ import time
 import os
 from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds, get_current_time_int
-from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed, get_config_value
+from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed, get_config_value, update_mark
 from logger import log_error
 
 
@@ -44,17 +44,17 @@ def main():
                 j = 0
                 row_date = str_to_date_time(row)
                     
-                if mark_date != last_mark_date:
-                    find_video = False
-                    i=0
-                    file_array_highlight=[]
-                    concat_string = ''
-                    video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH
-                    file_array = get_mp4_files_in_directory(video_path)
-                    new_video_path = video_path + FOLDER_HIGLIGHTS
-                    if not os.path.exists(new_video_path):
-                        # En caso de no existir el directorio lo creo
-                        os.makedirs(new_video_path)
+                #if mark_date != last_mark_date:
+                find_video = False
+                i=0
+                file_array_highlight=[]
+                concat_string = ''
+                video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH
+                file_array = get_mp4_files_in_directory(video_path)
+                new_video_path = video_path + FOLDER_HIGLIGHTS
+                if not os.path.exists(new_video_path):
+                    # En caso de no existir el directorio lo creo
+                    os.makedirs(new_video_path)
                     
                 for video in file_array:
                     video_str_date = convert_path_to_str_date(video)
@@ -116,6 +116,9 @@ def main():
                                 os.remove(aux_video_path)
                             else:
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
+                
+                update_mark(str(row))
+                marks = get_all_marks_not_processed()
 
             current_time = get_current_time_int()
             

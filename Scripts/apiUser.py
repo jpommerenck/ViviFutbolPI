@@ -11,17 +11,20 @@ from logger import log_info, log_error
 PATH_VIDEO_LOCALIZATION = ''
 MP4_VIDEOS_PATH = ''
 HIGHLIGHT_NAME = ''
+HIGHLIGHTS_PATH = ''
 
 
 #Constantes de la base de datos
 def update_variables():
     global PATH_VIDEO_LOCALIZATION
     global MP4_VIDEOS_PATH
-    global HIGHLIGHT_NAME 
+    global HIGHLIGHT_NAME
+    global HIGHLIGHTS_PATH
     PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
     MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
     HIGHLIGHT_NAME = get_config_value("HIGHLIGHT_NAME")
-
+    HIGHLIGHTS_PATH = get_config_value("HIGHLIGHTS_VIDEOS_PATH")
+    
 
 app = Flask(__name__)
 
@@ -34,8 +37,8 @@ def get_images():
         log_info(phone, 'USER', 'apiUser.py - get_images()')
 
         update_variables()
-        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
-        newDirectoryName = "tmp"
+        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
+        newDirectoryName = "tmp/"
         newDirectory = directory + newDirectoryName
 
         if(not os.path.exists(newDirectory)):
@@ -67,13 +70,13 @@ def get_images():
 def get_video(name):
     try:
         phone = request.form.get("phone")
-        log_info(phone, 'USER', 'apiUser.py - get_images()')
+        log_info(phone, 'USER', 'apiUser.py - get_video()')
 
         update_variables()
         ## TODO hay que ver como recibimos el codigo aca tmb
         ##code_download(video_code)
         name = name.split('.')[0] + ".mp4"
-        directory = directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
+        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
         filePath = directory + name
         
         if os.path.isfile(filePath):
@@ -96,7 +99,7 @@ def get_video(name):
 def validate_code(code):
     try:
         phone = request.form.get("phone")
-        log_info(phone, 'USER', 'apiUser.py - get_images()')
+        log_info(phone, 'USER', 'apiUser.py - validate_code()')
 
         update_variables()
         
