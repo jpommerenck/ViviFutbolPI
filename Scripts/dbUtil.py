@@ -40,7 +40,7 @@ def get_last_mark():
 def update_mark(markdate):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('UPDATE video_marks SET is_processed = 0 WHERE markdate = "'+markdate+'"')
+    cur.execute('UPDATE video_marks SET is_processed = 1 WHERE markdate = "'+markdate+'"')
     conn.commit()
     conn.close()
 
@@ -94,12 +94,6 @@ def insert_download_code(code):
         cur.execute('INSERT INTO download_codes VALUES("'+code+'", 0)')
         conn.commit()
     conn.close()
-
-#insert_mark('2017-06-18_12-54-08')
-#insert_mark('2017-06-18_12-54-25')
-#insert_mark('2017-06-18_12-54-31')
-#insert_mark('2017-06-18_12-54-37')
-#insert_mark('2017-06-18_12-54-51')
 
 def code_used(code, phone):
     currentDate = get_current_date_in_server_format_str()
@@ -203,6 +197,7 @@ def get_used_codes():
     conn.close()
     return codes
 
+
 def get_used_codes_without_downloads():
     codes = []
     conn = sqlite3.connect(path + bd_name)
@@ -218,11 +213,13 @@ def get_used_codes_without_downloads():
     conn.close()
     return codes
 
+
 def mark_codes_as_sent():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute('UPDATE used_download_codes SET sent = 1 WHERE (downloads = 0 AND sent = 0)')
     cur.execute('UPDATE user_code_uses SET sent = 1')
+
 
 def get_all_marks_not_processed():
     marks = []
@@ -232,6 +229,17 @@ def get_all_marks_not_processed():
         marks.append(row[0])
     conn.close()
     return marks
+
+
+def get_all_marks():
+    marks = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM video_marks'):
+        marks.append(row[0])
+    conn.close()
+    return marks
+
 
 def delete_all_marks():
     conn = sqlite3.connect(path + bd_name)

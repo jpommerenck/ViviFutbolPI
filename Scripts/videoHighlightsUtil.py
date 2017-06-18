@@ -1,10 +1,9 @@
-import time
 import os
 from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds, get_current_time_int
 from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed, get_config_value, update_mark
 from logger import log_error
-
+import time
 
 def main():
     try:
@@ -38,7 +37,7 @@ def main():
             video_path = ''
             total_record = TIME_AFTER + TIME_BEFORE
             marks = get_all_marks_not_processed()
-                
+            
             for row in marks:
                 mark_date = row.split('_')[0]
                 j = 0
@@ -76,6 +75,7 @@ def main():
                             
                         # Cuando no preciso concatenar videos
                         if video_date <= start_highlight and video_finish >= finish_highlight:
+                            find_video = True
                             seconds_start_cut = difference - TIME_BEFORE
                             os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)
                                 
@@ -87,6 +87,7 @@ def main():
                                 
                             # Consulto si se encontro el siguiente video, si no encontro es que es el ultimo video
                             if (next_video_str_date != ''):
+                                find_video = True
                                 next_video_date = str_to_date_time(next_video_str_date)
 
                                 os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)
@@ -94,6 +95,7 @@ def main():
                                 os.remove(aux_video_path)
                                     
                             else:
+                                find_video = True
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
                         else:
                             # Obtengo el video anterior para concatenar
@@ -106,6 +108,7 @@ def main():
 
                             # Consulto si se encontro el siguiente video, si no encontro es que es el ultimo video
                             if (previous_video_str_date != ''):
+                                find_video = True
                                 previous_video_date = str_to_date_time(previous_video_str_date)
                                 difference = rest_date_to_seconds(previous_video_date, row_date)
                                 seconds_start_cut = difference - TIME_BEFORE
@@ -115,14 +118,16 @@ def main():
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
                                 os.remove(aux_video_path)
                             else:
+                                find_video = True
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + video + " -out " + higlight_video_path)                    
                 
-                update_mark(str(row))
-                marks = get_all_marks_not_processed()
+                if find_video == True:
+                    update_mark(str(row))
 
             current_time = get_current_time_int()
             
     except Exception as e:
+        print('error ' + str(e))
         log_error("SYSTEM", 'SYSTEM', 'videoHighlights.py - main()', str(e))
 
 if __name__ == '__main__':
