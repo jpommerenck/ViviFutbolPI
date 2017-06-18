@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import time
 import os
+from logger import log_error
 
 def get_current_date_str():
     try:

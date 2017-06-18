@@ -1,9 +1,9 @@
 import os
 import glob
+from logger import log_error
 from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, convert_seconds_to_minutes, str_to_date_time, add_seconds_to_date, get_date_str, add_days_to_date, str_to_date, convert_path_to_str_date, rest_seconds_to_date
 from os.path import basename
 from picamera import PiCamera
-from logger import log_error
 from dbUtil import get_config_value
 
 PATH_VIDEO_LOCALIZATION = ''
@@ -195,16 +195,21 @@ def get_next_video(video_path):
         video_date = str_to_date_time(video_str_date)
         video_str_date = video_str_date.split('_')[0]
         new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
-        new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+        new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
 
         if not os.path.exists(new_video_path):
-            new_video_date = str(new_video_date).split(' ')[0]
-            new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
-            new_video_date = str(new_video_date).split(' ')[0]
-            new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + new_video_date + '/mp4/'
+            #Agrego un segundo al nombre del video y vuelvo a consultar ya que hay veces que se nombran con diferencia de 1 segundo
+            new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO + 1)
+            new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
 
-            if len(oldest_MP4_in_directory(new_video_path)) !=0 :
-                new_video_path = oldest_MP4_in_directory(new_video_path)
+            if not os.path.exists(new_video_path):
+                new_video_date = str(new_video_date).split(' ')[0]
+                new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
+                new_video_date = str(new_video_date).split(' ')[0]
+                new_video_path = PATH_VIDEO_LOCALIZATION + new_video_date + '/mp4/'
+
+                if len(oldest_MP4_in_directory(new_video_path)) !=0 :
+                    new_video_path = oldest_MP4_in_directory(new_video_path)
         
         return new_video_path    
     except Exception as e:
@@ -233,13 +238,13 @@ def get_previous_video(video_path):
         video_date = str_to_date_time(video_str_date)
         video_str_date = video_str_date.split('_')[0]
         new_video_date = rest_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
-        new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+        new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
         
         if not os.path.exists(new_video_path):
             new_video_date = str(new_video_date).split(' ')[0]
             new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
             new_video_date = str(new_video_date).split(' ')[0]
-            new_video_path = PATH_VIDEO_LOCALIZATION + "Videos/" + new_video_date + '/mp4/'
+            new_video_path = PATH_VIDEO_LOCALIZATION + new_video_date + '/mp4/'
 
             if len(newest_MP4_in_directory(new_video_path)) !=0 :
                 new_video_path = oldest_MP4_in_directory(new_video_path)

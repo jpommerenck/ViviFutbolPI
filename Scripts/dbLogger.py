@@ -73,3 +73,10 @@ def delete_old_logs():
     cur.execute('DELETE FROM log_activity WHERE date_time <= "' + last_date + '"')
     conn.commit()
     conn.close()
+
+def empty_db_log():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('DELETE FROM log_activity')
+    conn.commit()
+    conn.close()

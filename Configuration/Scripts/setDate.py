@@ -1,3 +1,3 @@
 import os
 
-os.system('sudo date -s "Sun Jun 18 15:01:00 2017"')
+os.system('sudo date -s "Sat Jun 17 15:01:00 2017"')
