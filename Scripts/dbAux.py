@@ -1,6 +1,7 @@
-from dbUtil import get_log_activity, get_config_value
+from dbUtil import create_owner_tokens_table, insert_owner_token, owner_token_exists
 
-print(get_config_value("PICTURES_LOCALIZATION_PATH"))
-logs = get_log_activity()
-for log in logs:
-    print(log['action']+' - '+log['description'])
+
+if owner_token_exists("AbC123"):
+    print("SI")
+else:
+    print("NO")

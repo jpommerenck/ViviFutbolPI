@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
+from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
-from dbUtil import get_config_value
+from dbUtil import get_config_value, owner_token_exists
 import base64
 
 #Constantes de la base de datos
@@ -20,10 +21,12 @@ def update_variables():
 
 
 app = Flask(__name__)
+auth = HTTPTokenAuth('Token')
 
 
 #172.24.1.1:5001/getImageMonitorDevice
 @app.route('/getImageMonitorDevice', methods=['GET', 'POST'])
+@auth.login_required
 def get_image_monitor_device():
     try:
         update_variables()
@@ -46,6 +49,20 @@ def get_image_monitor_device():
             "exception":str(e)}
 
         return jsonify(response)
+
+@auth.verify_token
+def verify_token(token):
+    return owner_token_exists(token)
+    
+
+@auth.error_handler
+def auth_error():
+    response = jsonify({
+        "status":"error",
+        "error":"wrongToken",
+        "errorMessage":"Usted no esta autorizado a realizar esta accion"})
+    response.status_code = 200
+    return response
 
 if __name__ == '__main__':
     update_variables()

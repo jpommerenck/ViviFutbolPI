@@ -62,6 +62,32 @@ def create_user_code_use_table():
     cur.execute('CREATE TABLE user_code_uses (code TEXT, phone TEXT, date TEXT, sent INTEGER, PRIMARY KEY(code, phone))')
     conn.close()
     
+def create_owner_tokens_table():
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE owner_tokens (token TEXT PRIMARY KEY)')
+    conn.close()
+
+def insert_owner_token(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT token FROM owner_tokens WHERE token = ?", (token,))
+    existingToken = cur.fetchone()
+    if existingToken is None:
+        cur.execute('INSERT INTO owner_tokens VALUES("'+token+'")')
+        conn.commit()
+    conn.close()
+    
+def owner_token_exists(token):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute("SELECT rowid FROM owner_tokens WHERE token=?",(token,)) 
+    data=cur.fetchone()
+    if data is None:
+        return False
+    else:
+        return True
+    
 def create_maintenance_tokens_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -239,6 +265,7 @@ def create_all_tables():
     create_video_mark_table()
     create_configuration_table()
     create_download_codes_table()
+    create_owner_tokens_table()
     create_maintenance_tokens_table()
     create_used_codes_table()
     create_user_code_use_table()
@@ -287,11 +314,13 @@ def get_log_activity():
 
 def get_latest_log_activity():
     logs = []
+    device_id = get_config_value("DEVICE_ID")
     start_date = get_last_week_date_in_server_format_str()
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     for row in cur.execute('SELECT * FROM log_activity WHERE date_time >= "'+start_date+'"'):
         log = {
+            "device_id":device_id,
             "date_time": row[0],
             "type": row[1],
             "user":row[2],
@@ -343,3 +372,5 @@ def create_environment_config():
     insert_configuration_value('AUDIOS_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Audios/')
     insert_configuration_value('SECONDS_WAITING_FOR_ADD_NEW_MARK','5')
     insert_configuration_value('VIDEO_TOTAL_TIME','3600')
+    #18-07-2017
+    insert_configuration_value('DEVICE_ID','1')

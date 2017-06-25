@@ -30,6 +30,7 @@ app = Flask(__name__)
 @app.route('/getImages', methods=['GET', 'POST'])
 def get_images():
     try:
+        update_variables()
         directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
         newDirectoryName = "tmp"
         newDirectory = directory + newDirectoryName
@@ -45,7 +46,7 @@ def get_images():
             os.system("avconv -i "+video+" -vframes 1 -f image2 "+imageName);
 
         zipName = "thumbs.zip"
-        os.system("cd "+directory+"; zip "+zipName+" "+newDirectoryName+"/*")
+        os.system("cd "+directory+"; zip "+zipName+" "+newDirectory+"/*")
         log_info(phone, 'USER', 'apiUser.py - get_images()')
 
         return send_file(directory+"/"+zipName, mimetype='application/zip')
@@ -64,14 +65,15 @@ def get_images():
 @app.route('/getVideo/<name>', methods=['GET', 'POST'])
 def get_video(name):
     try:
+        update_variables()
         ## TODO hay que ver como recibimos el codigo aca tmb
         ##code_download(video_code)
         name = name.split('.')[0] + ".mp4"
         directory = directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
-        filePath = directory + name
+        filePath = directory + '/' + name
         phone = request.form.get("phone")
         if os.path.isfile(filePath):
-            log_info(phone, 'USER', 'apiUser.py - get_video()')
+            log_info(phone, 'USER', 'apiUser.py - get_video()ACAA '+filePath)
             return send_file(filePath, mimetype='video/mp4')
         else:
             log_error(phone, 'USER', 'apiUser.py - get_video()', 'No se encontro el video ' + name)
