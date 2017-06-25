@@ -7,7 +7,7 @@ import os.path
 from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
-from videoMatchJoiner import join_match_video
+##from videoMatchJoiner import join_match_video
 
 PATH_VIDEO_LOCALIZATION = ''
 MP4_VIDEOS_PATH = ''

@@ -1,7 +1,4 @@
-from dbUtil import create_owner_tokens_table, insert_owner_token, owner_token_exists
+from dbUtil import create_owner_tokens_table, insert_owner_token, download_code_exists
+from txtLogger import log_error
 
-
-if owner_token_exists("AbC123"):
-    print("SI")
-else:
-    print("NO")
+log_error("PRUEBA")
