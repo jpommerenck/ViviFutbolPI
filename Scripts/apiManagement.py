@@ -31,11 +31,11 @@ auth = HTTPTokenAuth('Token')
 def get_time():
     try:
         email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_time()')
+
         response = {
             "status":"ok",
             "currentTime": time.strftime('%H') + ":" + time.strftime('%M')}
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_time()')
-
         return jsonify(response)
     except Exception as e:
         email = request.form.get("email")
@@ -53,16 +53,16 @@ def get_time():
 @auth.login_required
 def post_time():
     try:
-        hora = request.form.get("time")
         email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - post_time()')
+
+        hora = request.form.get("time")
         horaPI = hora.split(':')[0]
         minutosPI = hora.split(':')[1]
         set_time(horaPI, minutosPI)
         response = {
             "status":"ok",
             "newTime":time.strftime('%H') + ":" + time.strftime('%M')}
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - post_time()')
-
         return jsonify(response)
     except Exception as e:
         email = request.form.get("email")
@@ -80,14 +80,14 @@ def post_time():
 @auth.login_required
 def set_recording_times():
     try:
+        email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - set_recording_times()')
+        
         startTime = request.form.get("startTime")
         endTime = request.form.get("endTime")
-        email = request.form.get("email")
         modify_configuration_value("START_RECORDING_TIME", startTime)
         modify_configuration_value("FINISH_RECORDING_TIME", endTime)
         response = {"status":"ok"}
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - set_recording_times()')
-
         return jsonify(response)
     except Exception as e:
         email = request.form.get("email")
@@ -105,15 +105,15 @@ def set_recording_times():
 @auth.login_required
 def get_recording_times():
     try:
+        email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_recording_times()')
+        
         startTime = get_config_value("START_RECORDING_TIME")
         endTime = get_config_value("FINISH_RECORDING_TIME")
-        email = request.form.get("email")
         response = {
             "status":"ok",
             "startTime":startTime,
             "endTime":endTime}
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_recording_times()')
-
         return jsonify(response)
     except:
         email = request.form.get("email")
@@ -131,12 +131,13 @@ def get_recording_times():
 @auth.login_required
 def get_image_monitor_device():
     try:
-        update_variables()
         email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_image_monitor_device()')
+
+        update_variables()
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         image_monitor_device(video_directory, picture_path)
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_image_monitor_device()')
         with open(picture_path, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
         return jsonify({"status":"ok", "base64Image":str(encoded_string)})
@@ -156,11 +157,11 @@ def get_image_monitor_device():
 def upload_codes():
     try:
         email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - upload_codes()')
+
         codes = json.loads(request.form.get("codes"))
         for code in codes:
             insert_download_code(code['code'])
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - upload_codes()')
-
         return jsonify({
             "status":"ok",
             "codes":codes})        
@@ -179,12 +180,12 @@ def upload_codes():
 @auth.login_required
 def count_codes():
     try:
-        count = count_available_download_codes()
         email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - count_codes()')
+        
+        count = count_available_download_codes()
         ##TODO obtener deviceId        
         deviceId = 1
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - count_codes()')
-
         return jsonify({
             "status":"ok",
             "count":count,
@@ -204,17 +205,17 @@ def count_codes():
 @auth.login_required
 def get_space_limits():
     try:
+        email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_space_limits()')
+        
         startLimit = get_config_value("DISK_START_DELETE_SPACE")
         endLimit = get_config_value("DISK_STOP_DELETE_SPACE")
         min_space = request.form.get("min_space")
         max_space = request.form.get("max_space")
-        email = request.form.get("email")
         response = {
             "status":"ok",
             "startLimit":startLimit,
             "endLimit":endLimit}
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - get_space_limits()')
-
         return jsonify(response)
     except Exception as e:
         email = request.form.get("email")
@@ -232,9 +233,12 @@ def get_space_limits():
 @auth.login_required
 def set_space_limits():
     try:
+        email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - set_space_limits()')
+        
         startLimit = int(request.form.get("startLimit"))
         endLimit = int(request.form.get("endLimit"))
-        email = request.form.get("email")
+        
         if(startLimit < endLimit):
             if(startLimit >= 1024):
                 if(endLimit <= 15360):
@@ -256,8 +260,6 @@ def set_space_limits():
                 "status":"error",
                 "error":"invalidValues",
                 "errorMessage":"El limite para empezar a borrar debe ser menor al limite para terminar"}
-
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - set_space_limits()')
         return jsonify(response)
     except Exception as e:
         email = request.form.get("email")
@@ -276,6 +278,8 @@ def set_space_limits():
 def download_data():
     try:
         email = request.form.get("email")
+        log_info(email, 'MANAGEMENT', 'apiManagement.py - download_data()')
+        
         usedCodes = get_used_codes()
         usedCodesWithoutDownloads = get_used_codes_without_downloads()
         logActivity = latest_log_activity()
@@ -285,8 +289,6 @@ def download_data():
             "usedCodes":usedCodes,
             "usedCodesWithoutDownload":usedCodesWithoutDownloads,
             "logActivity":logActivity}
-
-        log_info(email, 'MANAGEMENT', 'apiManagement.py - download_data()')
         return jsonify(response)
     except Exception as e:
         email = request.form.get("email")

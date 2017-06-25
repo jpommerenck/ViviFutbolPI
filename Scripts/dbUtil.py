@@ -37,6 +37,13 @@ def get_last_mark():
     else:
         return value[0]
 
+def update_mark(markdate):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE video_marks SET is_processed = 1 WHERE markdate = "'+markdate+'"')
+    conn.commit()
+    conn.close()
+
 def create_configuration_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
@@ -216,6 +223,7 @@ def get_used_codes():
     conn.close()
     return codes
 
+
 def get_used_codes_without_downloads():
     codes = []
     conn = sqlite3.connect(path + bd_name)
@@ -231,11 +239,13 @@ def get_used_codes_without_downloads():
     conn.close()
     return codes
 
+
 def mark_codes_as_sent():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute('UPDATE used_download_codes SET sent = 1 WHERE (downloads = 0 AND sent = 0)')
     cur.execute('UPDATE user_code_uses SET sent = 1')
+
 
 def get_all_marks_not_processed():
     marks = []
@@ -245,6 +255,17 @@ def get_all_marks_not_processed():
         marks.append(row[0])
     conn.close()
     return marks
+
+
+def get_all_marks():
+    marks = []
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    for row in cur.execute('SELECT * FROM video_marks'):
+        marks.append(row[0])
+    conn.close()
+    return marks
+
 
 def delete_all_marks():
     conn = sqlite3.connect(path + bd_name)
@@ -269,32 +290,31 @@ def create_all_tables():
     create_maintenance_tokens_table()
     create_used_codes_table()
     create_user_code_use_table()
+    create_configurations_aux_table()
 
-#id date user rol action
-def create_log_activity_table():
+
+def create_configurations_aux_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('CREATE TABLE log_activity (date_time TEXT, type TEXT, user TEXT, rol TEXT, action TEXT, description TEXT)')
+    cur.execute('CREATE TABLE configurations_aux (variable TEXT, value TEXT)')
     conn.close()
+    
 
-
-def insert_log_info(user, rol, action):
-    date = get_current_date_in_server_format_str()
+def insert_configurations_aux_value(variable, value):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO log_activity VALUES("' + date + '","INFO","' + user + '","' + rol + '","' + action + '","")')
+    cur.execute('INSERT INTO configurations_aux VALUES("'+variable+'", "'+value+'")')
     conn.commit()
     conn.close()
 
 
-def insert_log_error(user, rol, action, message):
-    date = get_current_date_in_server_format_str()
+def modify_configurations_aux_value(variable, value):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO log_activity VALUES("' + date + '", "ERROR", "' + user + '", "' + rol + '", "' + action + '", "' + str(message) + '")')
+    cur.execute('UPDATE configurations_aux SET value = "'+value+'" WHERE variable = "'+variable+'"')
     conn.commit()
     conn.close()
-
+    
 def get_log_activity():
     logs = []
     conn = sqlite3.connect(path + bd_name)
@@ -331,16 +351,14 @@ def get_latest_log_activity():
         logs.append(log)
     conn.close()
     return logs
-
-def delete_old_logs():
-    date = get_current_date_str()
-    last_date = rest_days_to_date(str_to_date_time(date), 30)
-    last_date = str(last_date).split(' ')[0]
+        
+def get_config_aux_value(variable):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('DELETE FROM log_activity WHERE date_time <= "' + last_date + '"')
-    conn.commit()
+    value = cur.execute('SELECT * FROM configurations_aux WHERE(variable = "' + variable + '")').fetchone()
     conn.close()
+    return value[1]
+
     
 # Setea las varaibles de configuracion utilizadas en la base de datos
 def create_environment_config():
