@@ -5,6 +5,7 @@ from dateUtil import get_current_short_date_str, get_seconds_cut, get_time, conv
 from os.path import basename
 from picamera import PiCamera
 from dbUtil import get_config_value
+import base64
 
 PATH_VIDEO_LOCALIZATION = ''
 PATH_CONCAT_VIDEOS = ''
@@ -245,6 +246,17 @@ def video_between_marks(video_start_date, start, finish):
     except Exception as e:
         print(str(e))
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - video_between_marks()', str(e))
+
+
+def convert_image_to_base64(picture_path):
+    try:
+        encoded_string = ''
+        with open(picture_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+        return str(encoded_string)
+    except Exception as e:
+        print(str(e))
+        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - convert_image_to_base64()', str(e))
 
 
 #Obtiene el video anterior de otro video filmado

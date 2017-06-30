@@ -1,9 +1,8 @@
 from flask import Flask, request, jsonify
-from fileUtil import image_monitor_device
+from fileUtil import image_monitor_device, convert_image_to_base64
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
 from dbUtil import get_config_value
-import base64
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = ''
@@ -33,9 +32,8 @@ def get_image_monitor_device():
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         image_monitor_device(video_directory, picture_path)
-        with open(picture_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-        return jsonify({"status":"ok", "base64Image":str(encoded_string)})
+        encoded_string = convert_image_to_base64(picture_path)
+        return jsonify({"status":"ok", "base64Image":encoded_string})
 
     except Exception as e:
         email = request.form.get("email")

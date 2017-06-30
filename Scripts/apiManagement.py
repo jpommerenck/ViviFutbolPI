@@ -1,12 +1,11 @@
 from flask import Flask, request, jsonify, send_file
 from flask_httpauth import HTTPTokenAuth
-from fileUtil import image_monitor_device
+from fileUtil import image_monitor_device, convert_image_to_base64
 from dateUtil import get_current_date_str, get_current_short_date_str, set_time
 from dbUtil import modify_configuration_value, get_config_value, insert_download_code, count_available_download_codes, maintenance_token_exists, get_used_codes, get_used_codes_without_downloads, mark_codes_as_sent, get_config_value
 from logger import latest_log_activity, log_info, log_error
 import time
 import json
-import base64
 
 API_MANAGEMENT_PORT = 0
 PATH_VIDEO_LOCALIZATION = ''
@@ -138,9 +137,8 @@ def get_image_monitor_device():
         picture_path = PATH_PICTURES_LOCALIZATION + get_current_date_str() + ".jpg"
         video_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
         image_monitor_device(video_directory, picture_path)
-        with open(picture_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-        return jsonify({"status":"ok", "base64Image":str(encoded_string)})
+        encoded_string = convert_image_to_base64(picture_path)
+        return jsonify({"status":"ok", "base64Image":encoded_string})
     except Exception as e:
         email = request.form.get("email")
         log_error(email, 'MANAGEMENT', 'apiManagement.py - get_image_monitor_device()', str(e))
