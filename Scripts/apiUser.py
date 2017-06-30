@@ -7,7 +7,7 @@ import os.path
 from utils import decode_time
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
-from videoMatchJoiner import join_match_video
+##from videoMatchJoiner import join_match_video
 
 PATH_VIDEO_LOCALIZATION = ''
 MP4_VIDEOS_PATH = ''
@@ -34,13 +34,12 @@ app = Flask(__name__)
 @app.route('/getImages', methods=['GET', 'POST'])
 def get_images():
     try:
+        update_variables()
+        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
+        newDirectoryName = "tmp"
+        newDirectory = directory + newDirectoryName
         phone = request.form.get("phone")
         log_info(phone, 'USER', 'apiUser.py - get_images()')
-
-        update_variables()
-        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
-        newDirectoryName = "tmp/"
-        newDirectory = directory + newDirectoryName
 
         if(not os.path.exists(newDirectory)):
             os.makedirs(newDirectory)
@@ -72,11 +71,13 @@ def get_video(name):
     try:
         phone = request.form.get("phone")
         log_info(phone, 'USER', 'apiUser.py - get_video()')
-
+        
         update_variables()
         ## TODO hay que ver como recibimos el codigo aca tmb
         ##code_download(video_code)
+        
         name = name.split('.')[0] + ".mp4"
+        
         directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
         filePath = directory + name
         

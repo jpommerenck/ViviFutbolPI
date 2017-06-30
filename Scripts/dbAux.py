@@ -1,6 +1,4 @@
-from dbUtil import get_log_activity, get_config_value
+from dbUtil import create_owner_tokens_table, insert_owner_token, download_code_exists
+from txtLogger import log_error
 
-print(get_config_value("PICTURES_LOCALIZATION_PATH"))
-logs = get_log_activity()
-for log in logs:
-    print(log['action']+' - '+log['description'])
+log_error("PRUEBA")
