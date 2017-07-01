@@ -236,7 +236,8 @@ def set_space_limits():
         
         startLimit = int(request.form.get("startLimit"))
         endLimit = int(request.form.get("endLimit"))
-        
+        log_info(email, '***** startLimit', str(startLimit))
+        log_info(email, '***** endLimit', str(endLimit))
         if(startLimit < endLimit):
             if(startLimit >= 1024):
                 if(endLimit <= 15360):

@@ -73,7 +73,7 @@ def main():
                         #higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_NAME + row + '.mp4'
                         higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + row + '.mp4'
                         aux_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_AUX_NAME + row + '.mp4'
-                            
+                        
                         # Cuando no preciso concatenar videos
                         if video_date <= start_highlight and video_finish >= finish_highlight:
                             find_video = True
@@ -92,6 +92,10 @@ def main():
                                 next_video_date = str_to_date_time(next_video_str_date)
 
                                 os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)
+                                while not os.path.exists(aux_video_path):
+                                    os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)
+                                    time.sleep(1)
+
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
                                 os.remove(aux_video_path)
                                     
@@ -116,6 +120,11 @@ def main():
                                 seconds_start_cut = TIME_RECORDING_VIDEO - seconds_start_cut
 
                                 os.system("MP4Box -cat "  + previous_video + ' -cat ' + video +  " " + aux_video_path)
+
+                                while not os.path.exists(aux_video_path):
+                                    os.system("MP4Box -cat "  + previous_video + ' -cat ' + video +  " " + aux_video_path)
+                                    time.sleep(1)
+
                                 os.system("MP4Box -splitx " + str(seconds_start_cut) + ":" + str(seconds_start_cut + total_record) +" " + aux_video_path + " -out " + higlight_video_path)
                                 os.remove(aux_video_path)
                             else:
@@ -124,7 +133,7 @@ def main():
                 
                 if find_video == True:
                     update_mark(str(row))
-
+                time.sleep(TIME_RECORDING_VIDEO)
             current_time = get_current_time_int()
             
     except Exception as e:

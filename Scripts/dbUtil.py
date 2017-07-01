@@ -365,7 +365,7 @@ def create_environment_config():
     create_all_tables()
     insert_configuration_value('VIDEO_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Videos/')
     insert_configuration_value('PICTURES_LOCALIZATION_PATH','/home/pi/ViviFutbolLocal/Pictures/MonitorDevice/')
-    insert_configuration_value('TEMP_FILES_PATH','tmp')
+    insert_configuration_value('TEMP_FILES_PATH','tmp/')
     insert_configuration_value('CONCAT_VIDEOS_PATH','/Concat/')
     insert_configuration_value('MP4_VIDEOS_PATH','/mp4/')
     insert_configuration_value('HIGHLIGHTS_VIDEOS_PATH','Highlights/')

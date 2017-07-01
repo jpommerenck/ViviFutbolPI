@@ -13,7 +13,7 @@ PATH_VIDEO_LOCALIZATION = ''
 MP4_VIDEOS_PATH = ''
 HIGHLIGHT_NAME = ''
 HIGHLIGHTS_PATH = ''
-
+TEMP_FILES_PATH = ''
 
 #Constantes de la base de datos
 def update_variables():
@@ -21,10 +21,12 @@ def update_variables():
     global MP4_VIDEOS_PATH
     global HIGHLIGHT_NAME
     global HIGHLIGHTS_PATH
+    global TEMP_FILES_PATH
     PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
     MP4_VIDEOS_PATH = get_config_value("MP4_VIDEOS_PATH")
     HIGHLIGHT_NAME = get_config_value("HIGHLIGHT_NAME")
     HIGHLIGHTS_PATH = get_config_value("HIGHLIGHTS_VIDEOS_PATH")
+    TEMP_FILES_PATH = get_config_value("TEMP_FILES_PATH")
     
 
 app = Flask(__name__)
@@ -35,8 +37,8 @@ app = Flask(__name__)
 def get_images():
     try:
         update_variables()
-        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHT_NAME
-        newDirectoryName = "tmp"
+        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
+        newDirectoryName = TEMP_FILES_PATH
         newDirectory = directory + newDirectoryName
         phone = request.form.get("phone")
         log_info(phone, 'USER', 'apiUser.py - get_images()')

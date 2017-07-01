@@ -1,1 +1,2 @@
 ERROR:root:PRUEBA
+ERROR:root:Error in dbLogger.insert_log_error(). Message: 2017-07-01 11:48:10 - SYSTEM - SYSTEM - button.py - main() - UNIQUE constraint failed: video_marks.markdate. Exception: database is locked

@@ -25,6 +25,7 @@ def main():
             last_newest_file = ''
             video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str()
             video_path_mp4 = video_path + '/mp4/'
+            video_aux_path_mp4 = video_path + '/mp4/Aux/'
             file_array = get_h264_files_in_directory(video_path)
             newest_file = newest_h264_in_directory(video_path + '/')
                 
@@ -34,10 +35,15 @@ def main():
                         if not os.path.exists(video_path_mp4):
                             # En caso de no existir el directorio lo creo
                             os.makedirs(video_path_mp4)
+
+                        if not os.path.exists(video_aux_path_mp4):
+                            # En caso de no existir el directorio lo creo
+                            os.makedirs(video_aux_path_mp4)
                                 
-                        aux_file_name = file_name.replace(video_path, video_path_mp4)
+                        aux_file_name = file_name.replace(video_path, video_aux_path_mp4)
                         aux_file_name = aux_file_name.replace('.h264', '_aux.mp4')
                         new_file_name = aux_file_name.replace('_aux.mp4', '.mp4')
+                        new_file_name = new_file_name.replace('Aux/','')
 
                         audio_file_name = file_name.replace("Videos", "Audios")
                         audio_file_name = audio_file_name.replace(".h264", ".wav")

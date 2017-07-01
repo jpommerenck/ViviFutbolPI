@@ -1,17 +1,9 @@
 from flask import Flask, request, jsonify
-<<<<<<< HEAD
+from flask_httpauth import HTTPTokenAuth
 from fileUtil import image_monitor_device, convert_image_to_base64
 from dateUtil import get_current_date_str, get_current_short_date_str
 from logger import log_info, log_error
-from dbUtil import get_config_value
-=======
-from flask_httpauth import HTTPTokenAuth
-from fileUtil import image_monitor_device
-from dateUtil import get_current_date_str, get_current_short_date_str
-from logger import log_info, log_error
 from dbUtil import get_config_value, owner_token_exists
-import base64
->>>>>>> c01e8d6df2764862205fb2e829e11da7265c0369
 
 #Constantes de la base de datos
 PATH_VIDEO_LOCALIZATION = ''
