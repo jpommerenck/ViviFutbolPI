@@ -20,6 +20,7 @@ def main():
         FINISH_RECORDING_TIME = int(FINISH_RECORDING_TIME.replace(":",""))
         
         current_time = get_current_time_int()
+
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
                 
             last_newest_file = ''

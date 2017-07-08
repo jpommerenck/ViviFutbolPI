@@ -16,7 +16,7 @@ def create_video_mark_table():
 def insert_mark(date):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO video_marks VALUES("'+date+'", 0)')
+    cur.execute('INSERT INTO video_marks VALUES("'+date+'", 0, 0)')
     conn.commit()
     conn.close()
 
@@ -44,17 +44,40 @@ def update_mark(markdate):
     conn.commit()
     conn.close()
 
+
+def get_intents_from_mark(markdate):
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('SELECT intents FROM video_marks WHERE markdate = "'+markdate+'"')
+    result = cur.fetchone()
+    conn.close()
+    return result[0]
+
+
+def add_intent_to_mark(markdate):
+    intents = get_intents_from_mark(markdate);
+    intents = intents + 1;
+    print(str(intents))
+    conn = sqlite3.connect(path + bd_name)
+    cur = conn.cursor()
+    cur.execute('UPDATE video_marks SET intents = ' + str(intents) + ' WHERE markdate = "'+markdate+'"')
+    conn.commit()
+    conn.close()
+
+
 def create_configuration_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute('CREATE TABLE configurations (variable TEXT PRIMARY KEY, value TEXT)')
     conn.close()
 
+
 def create_download_codes_table():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute('CREATE TABLE download_codes (code TEXT PRIMARY KEY, times_used INTEGER)')
     conn.close()
+
 
 def create_used_codes_table():
     conn = sqlite3.connect(path + bd_name)
@@ -251,7 +274,7 @@ def get_all_marks_not_processed():
     marks = []
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    for row in cur.execute('SELECT * FROM video_marks WHERE(is_processed = 0)'):
+    for row in cur.execute('SELECT * FROM video_marks WHERE(is_processed = 0 AND intents < 3)'):
         marks.append(row[0])
     conn.close()
     return marks
@@ -273,6 +296,7 @@ def delete_all_marks():
     cur.execute('DELETE FROM video_marks')
     conn.commit()
     conn.close()
+
     
 #Ejemplo get_config_value('START_RECORDING_TIME')
 def get_config_value(variable):

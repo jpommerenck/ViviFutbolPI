@@ -1,5 +1,5 @@
 import os
-from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video, video_inserted_mark
+from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds, get_current_time_int
 from dbUtil import get_all_marks_between_dates, get_all_marks_not_processed, get_config_value, update_mark, add_intent_to_mark
 from logger import log_error
@@ -49,11 +49,6 @@ def main():
                 if not os.path.exists(new_video_path):
                     # En caso de no existir el directorio lo creo
                     os.makedirs(new_video_path)
-
-                # Obtengo el video en que se obtuvo la marca
-                video = video_inserted_mark(video_path, row)
-
-                if (video!='')
                     
                 for video in file_array:
                     video_str_date = convert_path_to_str_date(video)

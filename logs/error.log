@@ -1,2 +1,19 @@
 ERROR:root:PRUEBA
 ERROR:root:Error in dbLogger.insert_log_error(). Message: 2017-07-01 11:48:10 - SYSTEM - SYSTEM - button.py - main() - UNIQUE constraint failed: video_marks.markdate. Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:01:39 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:01:53 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:05 - 099USUARIOIOS - USER - apiUser.py - validate_code(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:10 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:16 - 099USUARIOIOS - USER - apiUser.py - get_images(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:25 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:32 - 099USUARIOIOS - USER - apiUser.py - validate_code(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:37 - 099USUARIOIOS - USER - apiUser.py - get_images(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:49 - 099USUARIOIOS - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:02:56 - 099USUARIOANDROID - USER - apiUser.py - validate_code(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:03:01 - 099USUARIOANDROID - USER - apiUser.py - get_images(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:03:12 - 099USUARIOIOS - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:03:25 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:03:31 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:03:45 - 099USUARIOANDROID - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:03:56 - 099USUARIOIOS - USER - apiUser.py - get_video(). Exception: database is locked
+ERROR:root:Error in dbLogger.insert_log_info(). Message: 2017-07-01 17:04:14 - 099USUARIOIOS - USER - apiUser.py - get_video(). Exception: database is locked

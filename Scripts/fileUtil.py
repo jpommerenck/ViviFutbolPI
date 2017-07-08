@@ -224,13 +224,12 @@ def video_contains_mark(video_date, mark):
         update_variables()
         finish_time = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
         mark_date = str_to_date_time(mark)
-        if (video_date < mark_date and finish_time > mark_date):
+        if (video_date <= mark_date and finish_time >= mark_date):
             return True
         else:
             return False
     except Exception as e:
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - video_contains_mark()', str(e))
-
 
 def video_between_marks(video_start_date, start, finish):
     try:

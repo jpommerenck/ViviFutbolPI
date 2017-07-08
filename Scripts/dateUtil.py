@@ -274,4 +274,5 @@ def check_for_insert_mark(new_mark, last_mark, time_blocked):
         else:
             return False
     except Exception as e:
+        raise Exception("dateUtil.py - check_for_insert_mark(): " + str(e))
         log_error("SYSTEM", 'SYSTEM', 'dateUtil.py - check_for_insert_mark()', str(e))
