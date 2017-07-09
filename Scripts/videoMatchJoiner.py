@@ -1,7 +1,7 @@
 import asyncio
 import time
 import os
-from fileUtil import get_mp4_files_in_directory, get_next_video, video_contains_mark, get_previous_video, video_between_marks
+from fileUtil import get_mp4_files_in_directory, get_next_video, get_previous_video, video_between_marks
 from dateUtil import get_current_short_date_str, get_time_subtr, get_time_adi, get_seconds_cut, get_time, str_to_date_time, convert_path_to_str_date, str_to_date, add_seconds_to_date, rest_seconds_to_date, rest_date_to_seconds
 from logger import log_error
 from dbUtil import get_config_value

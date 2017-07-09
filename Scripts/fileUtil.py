@@ -44,6 +44,7 @@ def get_mp4_files_in_directory(directory):
     try:
         files = glob.glob(directory+'/*.mp4')
         files.sort(key=lambda x: os.path.getmtime(x))
+        files.sort()
         return files
     except Exception as e:
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_mp4_files_in_directory()', str(e))
@@ -189,8 +190,9 @@ def get_time_last_frame(newest_h264_file, picture_path):
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_time_last_frame()', str(e))
 
 
+
 #Obtiene el siguiente video filmado de otro video
-def get_next_video(video_path):
+def get_next_video_old(video_path):
     try:
         update_variables()
         video_str_date = convert_path_to_str_date(video_path)
@@ -218,19 +220,59 @@ def get_next_video(video_path):
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_next_video()', str(e))
 
 
-#Retorna si una marca fue creada durante ese video
+
+# Obtiene el siguiente video filmado de otro video
+def get_next_video(video_path, video_mark):
+    try:
+        update_variables()
+        video_str_date = convert_path_to_str_date(video_path)
+        video_date = str_to_date_time(video_str_date)
+        video_str_date = video_str_date.split('_')[0]
+        new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
+        video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4'
+        new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+
+        # Pregunto si existe el video asi no tengo que recorrer todos los videos
+        if not os.path.exists(new_video_path):
+            new_video_path = ''
+            mp4_files = get_mp4_files_in_directory(video_path)
+            
+            # Obtengo el final de la marca para ver si entra en el video a consultar
+            mark_date = str_to_date_time(video_mark)
+            mark_str_date = video_mark.split('_')[0]
+            new_mark_date = add_seconds_to_date(mark_date, 10)
+
+            # Para cada video mp4 pregunto si el final de la marca pertenece al video
+            for video in mp4_files:
+                video_str_date = convert_path_to_str_date(video)
+                video_date = str_to_date_time(video_str_date)
+                finish_time = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
+                
+                if video_contains_mark(video_date, new_mark_date):
+                    return video
+                elif finish_time > new_mark_date:
+                    # Si el video termina despues de la marca pero no pertenecia a ningun video termino la iteracion
+                    break
+        
+        return new_video_path    
+    except Exception as e:
+        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_next_video()', str(e))
+
+
+# Retorna si una marca fue creada durante ese video
 def video_contains_mark(video_date, mark):
     try:
         update_variables()
         finish_time = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
-        mark_date = str_to_date_time(mark)
-        if (video_date <= mark_date and finish_time >= mark_date):
+        if (video_date <= mark and finish_time >= mark):
             return True
         else:
             return False
     except Exception as e:
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - video_contains_mark()', str(e))
 
+
+# Retorna true si el video se encuentra entre las marcas
 def video_between_marks(video_start_date, start, finish):
     try:
         update_variables()
@@ -247,6 +289,7 @@ def video_between_marks(video_start_date, start, finish):
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - video_between_marks()', str(e))
 
 
+# Convierte una imagen a base64
 def convert_image_to_base64(picture_path):
     try:
         encoded_string = ''
@@ -254,12 +297,12 @@ def convert_image_to_base64(picture_path):
             encoded_string = base64.b64encode(image_file.read())
         return str(encoded_string)
     except Exception as e:
-        print(str(e))
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - convert_image_to_base64()', str(e))
 
 
-#Obtiene el video anterior de otro video filmado
-def get_previous_video(video_path):
+
+# Obtiene el video anterior de otro video filmado
+def get_previous_video_old(video_path):
     try:
         update_variables()
         video_str_date = convert_path_to_str_date(video_path)
@@ -278,5 +321,41 @@ def get_previous_video(video_path):
                 new_video_path = oldest_MP4_in_directory(new_video_path)
         
         return new_video_path    
+    except Exception as e:
+        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_previous_video()', str(e))
+
+
+# Obtiene el video anterior de otro video filmado
+def get_previous_video(video_path, video_mark):
+    try:
+        update_variables()
+        video_str_date = convert_path_to_str_date(video_path)
+        video_date = str_to_date_time(video_str_date)
+        video_str_date = video_str_date.split('_')[0]
+        new_video_date = rest_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
+        video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4'
+        new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
+        
+        if not os.path.exists(new_video_path):
+            new_video_path = ''
+            mp4_files = get_mp4_files_in_directory(video_path)
+            
+            # Obtengo el final de la marca para ver si entra en el video a consultar
+            mark_date = str_to_date_time(video_mark)
+            mark_str_date = video_mark.split('_')[0]
+            new_mark_date = rest_seconds_to_date(mark_date, 10)
+
+            # Para cada video mp4 pregunto si el final de la marca pertenece al video
+            for video in mp4_files:
+                video_str_date = convert_path_to_str_date(video)
+                video_date = str_to_date_time(video_str_date)
+                
+                if video_contains_mark(video_date, new_mark_date):
+                    return video
+                elif video_date > new_mark_date:
+                    # Si el video empieza despues de la marca pero no pertenecia a ningun video termino la iteracion
+                    break
+
+        return new_video_path 
     except Exception as e:
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_previous_video()', str(e))

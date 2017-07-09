@@ -13,10 +13,10 @@ def create_video_mark_table():
 
 # Esta funcion sirve para insertar las marcas de jugadas destacadas en la base de datos
 # Ejemplo invocacion : insert_mark("2017-03-26_20-41-10")
-def insert_mark(date):
+def insert_mark(date, video_path):
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    cur.execute('INSERT INTO video_marks VALUES("'+date+'", 0, 0)')
+    cur.execute('INSERT INTO video_marks VALUES("'+date+'", 0, 0, "' + video_path + '")')
     conn.commit()
     conn.close()
 
@@ -57,7 +57,6 @@ def get_intents_from_mark(markdate):
 def add_intent_to_mark(markdate):
     intents = get_intents_from_mark(markdate);
     intents = intents + 1;
-    print(str(intents))
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     cur.execute('UPDATE video_marks SET intents = ' + str(intents) + ' WHERE markdate = "'+markdate+'"')
@@ -275,7 +274,7 @@ def get_all_marks_not_processed():
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
     for row in cur.execute('SELECT * FROM video_marks WHERE(is_processed = 0 AND intents < 3)'):
-        marks.append(row[0])
+        marks.append(row)
     conn.close()
     return marks
 
