@@ -7,14 +7,15 @@ from logger import log_error
 from dbUtil import get_config_value
 
 #join_match_video('2017-06-17_14-00-16')
+# 2017-07-15_14-30-40
 #@asyncio.coroutine
 def join_match_video(TIME_START):
     try:
         #TIME_START = '2017-06-17_14-00-16'
         TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
         PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
-        # VIDEO_TOTAL_TIME = int(get_config_value("VIDEO_TOTAL_TIME"))
-        VIDEO_TOTAL_TIME = 675
+        VIDEO_TOTAL_TIME = int(get_config_value("VIDEO_TOTAL_TIME"))
+        VIDEO_TOTAL_TIME = 180
         
         video_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + '/mp4/'
         
@@ -65,7 +66,7 @@ def join_match_video(TIME_START):
         aux_video_path = aux_video_path.replace(':','-')
         aux_video_path = aux_video_path.replace(' ','_')
                 
-        new_video_path = video_path + 'Complete/' + str(start_date) + '.mp4'
+        new_video_path = video_path + 'Complete/Complete' + str(start_date) + '.mp4'
         new_video_path = new_video_path.replace(':','-')
         new_video_path = new_video_path.replace(' ','_')
 

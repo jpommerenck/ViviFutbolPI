@@ -48,7 +48,7 @@ def main():
             audio_file_name = audio_path + get_current_date_str() + '.wav'
             os.system('arecord -D plughw:1 --duration=' + str(TIME_RECORDING_VIDEO) + ' -f cd -vv ' + audio_file_name)
             # Copio el audio para luego analizar los niveles de sonidos
-            shutil.copy2(audio_file_name, audio_aux_path)
+            #shutil.copy2(audio_file_name, audio_aux_path)
 
                 
             if os.path.exists(audio_path):
