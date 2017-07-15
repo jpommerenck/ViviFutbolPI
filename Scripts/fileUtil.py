@@ -6,6 +6,7 @@ from os.path import basename
 from picamera import PiCamera
 from dbUtil import get_config_value
 import base64
+import subprocess
 
 PATH_VIDEO_LOCALIZATION = ''
 PATH_CONCAT_VIDEOS = ''
@@ -25,6 +26,28 @@ def update_variables():
     TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
     TIME_AFTER = int(get_config_value("TIME_AFTER_RECORD"))
     TIME_BEFORE = int(get_config_value("TIME_BEFORE_RECORD"))
+
+
+# Ejemplo de llamada:
+# get_mp4_between_dates('/home/pi/ViviFutbolLocal/Videos/2017-07-15/mp4/', '2017-07-15 14:35:00', '2017-07-15 14:38:00')
+def get_mp4_between_dates(folder_path, start_date, finish_date):
+    try:
+        file_list = []
+        result = subprocess.Popen('find ' + folder_path +' -name "*.mp4" -type f -newermt "' + start_date + '" ! -newermt "' + finish_date + '" -exec ls -lt --time-style=long-iso {} +', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (stdout,stderr) = result.communicate()
+        files = stdout.decode().split()
+        if len(files) > 0:
+            i=7
+            while i < len(files):
+                file_list.append(files[i])
+                i+=8
+            file_list.sort()
+            
+        return file_list
+    
+    except Exception as e:
+        print(str(e))
+        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_mp4_between_dates()', str(e))
 
 
 def get_concat_file_name(file_name):
