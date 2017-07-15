@@ -38,24 +38,24 @@ def get_images():
     try:
         update_variables()
         directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
-        newDirectoryName = TEMP_FILES_PATH
-        newDirectory = directory + newDirectoryName
+        new_directory_name = TEMP_FILES_PATH
+        new_directory = directory + new_directory_name
         phone = request.form.get("phone")
         log_info(phone, 'USER', 'apiUser.py - get_images()')
 
-        if(not os.path.exists(newDirectory)):
-            os.makedirs(newDirectory)
+        if(not os.path.exists(new_directory)):
+            os.makedirs(new_directory)
             
         videos = get_mp4_files_in_directory(directory)
         for video in videos:
-            imageName = video.replace(directory, newDirectory)
-            imageName = imageName.replace(".mp4",".jpg")
-            os.system("avconv -i "+video+" -vframes 1 -f image2 "+imageName);
+            image_name = video.replace(directory, new_directory)
+            image_name = image_name.replace(".mp4",".jpg")
+            os.system("avconv -i " + video + " -vframes 1 -f image2 " + image_name);
 
-        zipName = "thumbs.zip"
-        os.system("cd "+directory+"; zip "+zipName+" "+newDirectoryName+"/*")
+        zip_name = "thumbs.zip"
+        os.system("cd " + directory + "; zip "+zip_name+" "+new_directory_name+"/*")
         
-        return send_file(directory+"/"+zipName, mimetype='application/zip')
+        return send_file(directory + "/" + zip_name, mimetype = 'pplication/zip')
     except Exception as e:
         phone = request.form.get("phone")
         log_error(phone, 'OWNER', 'apiUser.py - get_images()', str(e))
@@ -81,10 +81,10 @@ def get_video(name):
         name = name.split('.')[0] + ".mp4"
         
         directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
-        filePath = directory + name
+        file_path = directory + name
         
-        if os.path.isfile(filePath):
-            return send_file(filePath, mimetype='video/mp4')
+        if os.path.isfile(file_path):
+            return send_file(file_path, mimetype='video/mp4')
         else:
             return ('',204)
     except Exception as e:
