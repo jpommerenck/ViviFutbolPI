@@ -74,7 +74,7 @@ def join_match_video(TIME_START):
         # Recorto el video generado con el segundo en que debe empezar y el video en que debe termiar
         os.system('MP4Box -splitx ' + str(start_complete_video) + ':' + str(finish_complete_video) + ' "' + aux_video_path + '" -out "' + new_video_path + '"')
         os.remove(aux_video_path)
-        yield from end()    
+        #yield from end()    
     except Exception as e:
         print(str(e))
         log_error('SYSTEM', 'SYSTEM', 'videoMatchJoiner.py - main()', str(e))

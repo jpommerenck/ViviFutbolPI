@@ -60,6 +60,7 @@ def convert_path_to_str_date(video_path):
         video_str_date = video_str_date.split('/mp4/')[1]
         return video_str_date
     except Exception as e:
+        raise Exception("dateUtil.py - convert_path_to_str_date(" + video_path + "): " + str(e))
         log_error("SYSTEM", 'SYSTEM', 'dateUtil.py - convert_path_to_str_date()', str(e))
 
 

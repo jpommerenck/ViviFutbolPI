@@ -39,7 +39,6 @@ def main():
         current_time = get_current_time_int()
 
         while (current_time >= START_RECORDING_TIME) & (current_time <= FINISH_RECORDING_TIME):
-            FIND_VIDEO = False
             video_path = ''
             total_record = TIME_AFTER + TIME_BEFORE
             marks = get_all_marks_not_processed()
@@ -52,7 +51,6 @@ def main():
 
                 video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH
                 new_video_path = video_path + FOLDER_HIGLIGHTS
-
                 video_marked = video_marked.replace(PATH_VIDEO_LOCALIZATION + mark_date + '/', PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH)
                 video_marked = video_marked.replace('h264','mp4')
                 
@@ -74,8 +72,10 @@ def main():
                     # Diferencia en segundos entre el inicio del video y la marca
                     difference = rest_date_to_seconds(video_date, mark_date_time)
 
+                    mark_time = mark.replace(mark_date + '_', '')
+                    mark_time = mark_time.replace('-', ':')
                     # Creo el nombre del video de la jugada destacada
-                    higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + mark + '.mp4'
+                    higlight_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + mark_time + '.mp4'
                     aux_video_path = PATH_VIDEO_LOCALIZATION + mark_date + MP4_VIDEOS_PATH + FOLDER_HIGLIGHTS + HIGHLIGHT_AUX_NAME + mark + '.mp4'
 
                     
@@ -88,19 +88,19 @@ def main():
 
                     elif video_date <= start_highlight:
                          # Genero el video de la jugada destacada utilizando el siguiente video
-                        generate_highlight_with_next_video(mark, video_marked, difference, aux_video_path, higlight_video_path)
+                        generate_highlight_with_next_video(video_marked, difference, aux_video_path, higlight_video_path)
                     else:
                         # Genero el video de la jugada destacada utilizando el anterior video
-                        generate_highlight_with_previous_video(mark, mark_date_time, video_marked, difference, aux_video_path, higlight_video_path)
+                        generate_highlight_with_previous_video(mark_date_time, video_marked, difference, aux_video_path, higlight_video_path)
                   
-                
                 if FIND_VIDEO == True:
                     update_mark(str(mark))
                 else:
                     # Luego de 3 intentos no se procesara mas la marca
                     add_intent_to_mark(str(mark))
                     time.sleep(TIME_RECORDING_VIDEO)
-                    
+            if (len(marks) == 0):
+                time.sleep(TIME_RECORDING_VIDEO)
             current_time = get_current_time_int()
             
     except Exception as e:
@@ -119,17 +119,20 @@ def main():
 #       higlight_video_path : nombre del video de la jugada destacada
 #
 #####################################################################################################
-def generate_highlight_with_next_video(mark, video, difference, aux_video_path, higlight_video_path):
+def generate_highlight_with_next_video(video, difference, aux_video_path, higlight_video_path):
+    global FIND_VIDEO
+    global TIME_RECORDING_VIDEO
+    global TIME_BEFORE
+    global TIME_AFTER
+    
     # Obtengo el video siguiente para concatenar para concatenaro
-    next_video = get_next_video(video, mark)
-    next_video_str_date = convert_path_to_str_date(next_video)
+    next_video = get_next_video(video)
     
     # Consulto a ver si es el ultimo video o se esta grabando otro video
     if (next_video == ''):
         time.sleep(TIME_RECORDING_VIDEO)
-        next_video = get_next_video(video, mark)
-        next_video_str_date = convert_path_to_str_date(next_video)
-    
+        next_video = get_next_video(video)
+        
     seconds_start_cut = difference - TIME_BEFORE
     total_record = TIME_AFTER + TIME_BEFORE
     seconds_finish_cut = seconds_start_cut + total_record
@@ -137,12 +140,13 @@ def generate_highlight_with_next_video(mark, video, difference, aux_video_path, 
     # Consulto si se encontro el siguiente video, si no encontro es que es el ultimo video
     if (next_video != ''):
         FIND_VIDEO = True
+        
+        next_video_str_date = convert_path_to_str_date(next_video) 
         next_video_date = str_to_date_time(next_video_str_date)
 
         os.system("MP4Box -cat "  + video + ' -cat ' + next_video +  " " + aux_video_path)
         generate_video(seconds_start_cut, seconds_finish_cut, aux_video_path, higlight_video_path)
-        os.remove(aux_video_path)
-                                    
+        os.remove(aux_video_path)                                    
     else:
         FIND_VIDEO = True
         generate_video(seconds_start_cut, seconds_finish_cut, video, higlight_video_path)
@@ -160,10 +164,15 @@ def generate_highlight_with_next_video(mark, video, difference, aux_video_path, 
 #       higlight_video_path : nombre del video de la jugada destacada
 #
 #####################################################################################################
-def generate_highlight_with_previous_video(mark, mark_date_time, video, difference, aux_video_path, higlight_video_path):
+def generate_highlight_with_previous_video(mark_date_time, video, difference, aux_video_path, higlight_video_path):
+    global FIND_VIDEO
+    global TIME_RECORDING_VIDEO
+    global TIME_BEFORE
+    global TIME_AFTER
+
     # Obtengo el video anterior para concatenar
-    previous_video = get_previous_video(video, mark)
-    previous_video_str_date = convert_path_to_str_date(previous_video)
+    previous_video = get_previous_video(video)
+    
     seconds_start_cut = difference - TIME_BEFORE
     total_record = TIME_AFTER + TIME_BEFORE
     seconds_finish_cut = seconds_start_cut + total_record
@@ -174,7 +183,8 @@ def generate_highlight_with_previous_video(mark, mark_date_time, video, differen
     # Consulto si se encontro el siguiente video, si no encontro es que es el ultimo video
     if (previous_video != ''):
         FIND_VIDEO = True
-        
+
+        previous_video_str_date = convert_path_to_str_date(previous_video)
         previous_video_date = str_to_date_time(previous_video_str_date)
         difference = rest_date_to_seconds(previous_video_date, mark_date_time)
         seconds_start_cut = difference - TIME_BEFORE

@@ -273,7 +273,7 @@ def get_all_marks_not_processed():
     marks = []
     conn = sqlite3.connect(path + bd_name)
     cur = conn.cursor()
-    for row in cur.execute('SELECT * FROM video_marks WHERE(is_processed = 0 AND intents < 3)'):
+    for row in cur.execute('SELECT * FROM video_marks WHERE(is_processed = 0 AND intents < 4)'):
         marks.append(row)
     conn.close()
     return marks

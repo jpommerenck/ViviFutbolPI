@@ -10,15 +10,21 @@ import base64
 PATH_VIDEO_LOCALIZATION = ''
 PATH_CONCAT_VIDEOS = ''
 TIME_RECORDING_VIDEO = 0
+TIME_BEFORE = 0
+TIME_AFTER = 0
 
 # Constantes de la base de datos
 def update_variables():
     global PATH_VIDEO_LOCALIZATION
     global PATH_CONCAT_VIDEOS
     global TIME_RECORDING_VIDEO
+    global TIME_BEFORE
+    global TIME_AFTER
     PATH_VIDEO_LOCALIZATION = get_config_value("VIDEO_LOCALIZATION_PATH")
     PATH_CONCAT_VIDEOS = get_config_value("CONCAT_VIDEOS_PATH")
     TIME_RECORDING_VIDEO = int(get_config_value("TIME_RECORDING_VIDEO"))
+    TIME_AFTER = int(get_config_value("TIME_AFTER_RECORD"))
+    TIME_BEFORE = int(get_config_value("TIME_BEFORE_RECORD"))
 
 
 def get_concat_file_name(file_name):
@@ -190,39 +196,8 @@ def get_time_last_frame(newest_h264_file, picture_path):
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_time_last_frame()', str(e))
 
 
-
-#Obtiene el siguiente video filmado de otro video
-def get_next_video_old(video_path):
-    try:
-        update_variables()
-        video_str_date = convert_path_to_str_date(video_path)
-        video_date = str_to_date_time(video_str_date)
-        video_str_date = video_str_date.split('_')[0]
-        new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
-        new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
-
-        if not os.path.exists(new_video_path):
-            #Agrego un segundo al nombre del video y vuelvo a consultar ya que hay veces que se nombran con diferencia de 1 segundo
-            new_video_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO + 1)
-            new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
-
-            if not os.path.exists(new_video_path):
-                new_video_date = str(new_video_date).split(' ')[0]
-                new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
-                new_video_date = str(new_video_date).split(' ')[0]
-                new_video_path = PATH_VIDEO_LOCALIZATION + new_video_date + '/mp4/'
-
-                if len(oldest_MP4_in_directory(new_video_path)) !=0 :
-                    new_video_path = oldest_MP4_in_directory(new_video_path)
-        
-        return new_video_path    
-    except Exception as e:
-        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_next_video()', str(e))
-
-
-
 # Obtiene el siguiente video filmado de otro video
-def get_next_video(video_path, video_mark):
+def get_next_video(video_path):
     try:
         update_variables()
         video_str_date = convert_path_to_str_date(video_path)
@@ -238,10 +213,8 @@ def get_next_video(video_path, video_mark):
             mp4_files = get_mp4_files_in_directory(video_path)
             
             # Obtengo el final de la marca para ver si entra en el video a consultar
-            mark_date = str_to_date_time(video_mark)
-            mark_str_date = video_mark.split('_')[0]
-            new_mark_date = add_seconds_to_date(mark_date, 10)
-
+            new_mark_date = add_seconds_to_date(video_date, TIME_RECORDING_VIDEO + TIME_AFTER)
+            
             # Para cada video mp4 pregunto si el final de la marca pertenece al video
             for video in mp4_files:
                 video_str_date = convert_path_to_str_date(video)
@@ -300,33 +273,8 @@ def convert_image_to_base64(picture_path):
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - convert_image_to_base64()', str(e))
 
 
-
 # Obtiene el video anterior de otro video filmado
-def get_previous_video_old(video_path):
-    try:
-        update_variables()
-        video_str_date = convert_path_to_str_date(video_path)
-        video_date = str_to_date_time(video_str_date)
-        video_str_date = video_str_date.split('_')[0]
-        new_video_date = rest_seconds_to_date(video_date, TIME_RECORDING_VIDEO)
-        new_video_path = PATH_VIDEO_LOCALIZATION + video_str_date + '/mp4/'+ get_date_str(new_video_date) + ".mp4"
-        
-        if not os.path.exists(new_video_path):
-            new_video_date = str(new_video_date).split(' ')[0]
-            new_video_date = add_days_to_date(str_to_date(new_video_date), 1)
-            new_video_date = str(new_video_date).split(' ')[0]
-            new_video_path = PATH_VIDEO_LOCALIZATION + new_video_date + '/mp4/'
-
-            if len(newest_MP4_in_directory(new_video_path)) !=0 :
-                new_video_path = oldest_MP4_in_directory(new_video_path)
-        
-        return new_video_path    
-    except Exception as e:
-        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_previous_video()', str(e))
-
-
-# Obtiene el video anterior de otro video filmado
-def get_previous_video(video_path, video_mark):
+def get_previous_video(video_path):
     try:
         update_variables()
         video_str_date = convert_path_to_str_date(video_path)
@@ -341,10 +289,8 @@ def get_previous_video(video_path, video_mark):
             mp4_files = get_mp4_files_in_directory(video_path)
             
             # Obtengo el final de la marca para ver si entra en el video a consultar
-            mark_date = str_to_date_time(video_mark)
-            mark_str_date = video_mark.split('_')[0]
-            new_mark_date = rest_seconds_to_date(mark_date, 10)
-
+            new_mark_date = rest_seconds_to_date(video_date, TIME_BEFORE)
+            
             # Para cada video mp4 pregunto si el final de la marca pertenece al video
             for video in mp4_files:
                 video_str_date = convert_path_to_str_date(video)
