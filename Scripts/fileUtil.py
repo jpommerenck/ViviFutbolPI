@@ -328,3 +328,4 @@ def get_previous_video(video_path):
         return new_video_path 
     except Exception as e:
         log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - get_previous_video()', str(e))
+

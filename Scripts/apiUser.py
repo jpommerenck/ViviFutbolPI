@@ -1,13 +1,12 @@
-from flask import Flask, send_file, jsonify, request
-from fileUtil import get_mp4_files_in_directory, get_jpg_files_in_directory, get_file_name_without_extension
-from dbUtil import download_code_exists, code_used, code_download, get_config_value
-import sqlite3
 import os
 import os.path
-from utils import decode_time
-from dateUtil import get_current_date_str, get_current_short_date_str
+from flask import Flask, send_file, jsonify, request
+from fileUtil import get_mp4_between_dates
+from dbUtil import code_download, get_config_value
+from utils import is_valid_code, decode_time
+from dateUtil import get_current_short_date_str, str_to_date_time, add_seconds_to_date
 from logger import log_info, log_error
-##from videoMatchJoiner import join_match_video
+
 
 PATH_VIDEO_LOCALIZATION = ''
 MP4_VIDEOS_PATH = ''
@@ -37,25 +36,47 @@ app = Flask(__name__)
 def get_images():
     try:
         update_variables()
-        directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
-        new_directory_name = TEMP_FILES_PATH
-        new_directory = directory + new_directory_name
+        highlights_path = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH
+        temp_folder = TEMP_FILES_PATH
         phone = request.form.get("phone")
+        code = request.form.get("code")
+        code = 'YKYJROAB'
         log_info(phone, 'USER', 'apiUser.py - get_images()')
 
-        if(not os.path.exists(new_directory)):
-            os.makedirs(new_directory)
+        if is_valid_code(code):
+            code_directory = PATH_VIDEO_LOCALIZATION + get_current_short_date_str() + MP4_VIDEOS_PATH + HIGHLIGHTS_PATH + code + "/"
             
-        videos = get_mp4_files_in_directory(directory)
-        for video in videos:
-            image_name = video.replace(directory, new_directory)
-            image_name = image_name.replace(".mp4",".jpg")
-            os.system("avconv -i " + video + " -vframes 1 -f image2 " + image_name);
+            video_code = code[:-3]
+            encrypted_time = code[-3:]
+            time = decode_time(encrypted_time)
+            match_start_time = get_current_short_date_str() + '_' + time + '-00'
+            match_start_time = match_start_time.replace(':','-')
+            
+            match_start_date_time = str_to_date_time(match_start_time)
+            match_finish_date_time = add_seconds_to_date(match_start_date_time,3600)
+            
+            if(not os.path.exists(highlights_path)):
+                os.makedirs(highlights_path)
 
-        zip_name = "thumbs.zip"
-        os.system("cd " + directory + "; zip "+zip_name+" "+new_directory_name+"/*")
+            if(not os.path.exists(code_directory)):
+                os.makedirs(code_directory)    
+            
+            videos = get_mp4_between_dates(highlights_path,str(match_start_date_time), str(match_finish_date_time))
+            for video in videos:
+                image_name = video.replace(highlights_path, code_directory)
+                image_name = image_name.replace(".mp4",".jpg")
+                os.system("avconv -i " + video + " -vframes 1 -f image2 " + image_name);
+
+            zip_name = "thumbs.zip"
+            os.system("cd " + code_directory + "; zip " + zip_name + " " + code_directory + "/*")
         
-        return send_file(directory + "/" + zip_name, mimetype = 'pplication/zip')
+            return send_file(code_directory + "/" + zip_name, mimetype = 'application/zip')
+        else:
+            log_error(phone, 'OWNER', 'apiUser.py - get_images()', 'El codigo enviado no es valido')
+            response = {
+                "status":"error",
+                "error":"errorGettingImages",
+                "errorMessage":"El codigo enviado no es valido"}
     except Exception as e:
         phone = request.form.get("phone")
         log_error(phone, 'OWNER', 'apiUser.py - get_images()', str(e))
@@ -106,47 +127,31 @@ def validate_code(code):
         log_info(phone, 'USER', 'apiUser.py - validate_code()')
 
         update_variables()
-        
-        if(len(code) > 4):            
-            if code == "ABC123":
-                ##TODO DEBUG - sacar
-                return ('OK', 200)
-            else:
-                ##el codigo es toda la string salvo las ultimas 3 letras
-                video_code = code[:-3]
-                ##el tiempo son las ultimas tres letras
-                encrypted_time = code[-3:]
-                time = decode_time(encrypted_time)
-                if time is not None:
-                    if(download_code_exists(video_code)):
-                        ##code_used(video_code)
+        code = 'YKYJROAB'
+        if is_valid_code(code):
+            ##el codigo es toda la string salvo las ultimas 3 letras
+            video_code = code[:-3]
+            ##el tiempo son las ultimas tres letras
+            encrypted_time = code[-3:]
+            time = decode_time(encrypted_time)
+            # Format match_start_time : 'yyy-mm-dd_hh-mm-ss'
+            time_match = str(time).replace(':','-')
+            match_start_time = get_current_short_date_str() + '_' + time_match + '-00'
 
-                        # Format match_start_time : 'yyy-mm-dd_hh-mm-ss'
-                        time_match = str(time).replace(':','-')
-                        match_start_time = get_current_short_date_str() + '_' + time_match + '-00'
-                        # Genero el video del partido completo
-                        join_match_video(match_start_time)
-
-                        return jsonify({
-                            "status":"ok",
-                            "time":time,
-                            "date":match_start_time})
-                    else:
-                        log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo ' + code +  ' es incorrecto')
-                        return jsonify({
-                            "status":"error",
-                            "errorMessage":"El codigo es incorrecto"})
-                else:
-                    log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo ' + code +  ' es incorrecto')
-                    return jsonify({
-                        "status":"error",
-                        "errorMessage":"El codigo es incorrecto"})
-        else:
-            log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo debe tener al menos 5 caracteres')
+            # Genero el video del partido completo
+            #join_match_video(match_start_time)
 
             return jsonify({
+                "status":"ok",
+                "time":time,
+                "date":match_start_time})
+
+        else:
+            log_error(phone, 'USER', 'apiUser.py - validate_code()', 'El codigo ' + code +  ' es incorrecto')
+            return jsonify({
                 "status":"error",
-                "errorMessage":"El codigo debe tener al menos 5 caracteres"})
+                "errorMessage":"El codigo es incorrecto"})
+        
     except Exception as e:
         phone = request.form.get("phone")
         log_error(phone, 'USER', 'apiUser.py - validate_code()', str(e))

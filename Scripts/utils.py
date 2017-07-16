@@ -1,3 +1,7 @@
+from logger import log_error
+from dbUtil import download_code_exists
+
+
 def decode_time(encryptedHour):
     hours_char = encryptedHour[0:1]
     minute_tens = encryptedHour[1:2]
@@ -68,3 +72,28 @@ def decode_minute_digits(minute_digit):
             'I':'8',
             'J':'9',
         }.get(minute_digit, None)
+
+
+def is_valid_code(code):
+    try:
+        if(len(code) > 4):
+            if code == "ABC123":
+                ##TODO DEBUG - sacar
+                return True
+            else:
+                video_code = code[:-3]
+                encrypted_time = code[-3:]
+                time = decode_time(encrypted_time)
+                if time is not None:
+                    if(download_code_exists(video_code)):
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+        else:
+            return False
+        
+    except Exception as e:
+        log_error('SYSTEM', 'SYSTEM', 'fileUtil.py - validate_code()', str(e))
+        return False
